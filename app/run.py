@@ -2,10 +2,9 @@ import os
 from flask import Flask
 from .extensions import init_extensions
 from dotenv import load_dotenv
-from .models import Producto
+from .models import Producto, Categoria
 from flask import jsonify
-
-
+from .rutes.productos_rutes import productos_bp
 
 def create_app():
     app = Flask(__name__)
@@ -17,22 +16,16 @@ def create_app():
     # Inicializar extensiones
     init_extensions(app)
 
+    # Registrar blueprints de las rutas
+    app.register_blueprint(productos_bp, url_prefix="/api/v1")
 
     @app.get('/')
     def home():
         return '<h1> Hello World ! </h1>'
 
-    @app.get('/productos')
-    def productos():
-        mis_productos = Producto.query.all()
-        return jsonify({
-            'productos': [p.to_dict() for p in mis_productos]
-        })
+
 
     return app
-
-
-
 
 if __name__ == '__main__':
     create_app().run(host="0.0.0.0", port=8000, debug=True)

@@ -19,7 +19,7 @@ class Usuario(db.Model):
 
 
 # Modelo de tabla movimientos
-class Movimentos(db.Model):
+class Movimientos(db.Model):
     __tablename__ = 'movimientos'
 
     id_movimiento = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -56,7 +56,7 @@ class Producto (db.Model):
 
     categoria = db.relationship("Categoria", back_populates="productos")
     movimientos = db.relationship("Movimientos", back_populates="producto")
-    proveedores = db.relationship("ProductoProveedor", back_populates="productos")
+    proveedores = db.relationship("ProductoProveedor", back_populates="producto")
 
 
 # Modelo de tabla categoria
@@ -65,13 +65,13 @@ class Categoria (db.Model):
 
     id_categoria = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     nombre_categoria = db.Column(db.String(100), nullable=False)
-    Descripcion_cat = db.Column(db.String(150), nullable=False)
+    descripcion_cat = db.Column(db.String(150), nullable=False)
     fecha_creacion = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     status = db.Column(db.Boolean, default=True)
     productos = db.relationship("Producto", back_populates="categoria")
 
 # Modelo de tabla producto_proveedor
-class Producto_proveedor(db.Model):
+class ProductoProveedor(db.Model):
     __tablename__ = 'producto_proveedor'
 
     id_producto_proveedor = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -84,7 +84,6 @@ class Producto_proveedor(db.Model):
 
     producto = db.relationship("Producto", back_populates="proveedores")
     proveedor = db.relationship("Proveedor", back_populates="productos")
-    categoria = db.relationship("Categoria", back_populates="productos")
 
 
 # Modelo de tabla proveedor

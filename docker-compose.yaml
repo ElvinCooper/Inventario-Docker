@@ -1,0 +1,26 @@
+
+services:
+  web:
+    build: .
+    container_name: inventario_api
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    container_name: inventario_db
+    env_file: .env
+    ports:
+      - "5433:5432"   # mapeo del puerto 5433 del host → 5432 del contenedor.
+    volumes:
+      - inventario_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  inventario_data:

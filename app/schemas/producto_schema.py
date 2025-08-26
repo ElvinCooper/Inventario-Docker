@@ -20,5 +20,24 @@ class ProductoSchema(Schema):
     status = fields.Bool()
 
 
+# ---- Schema para validation ----#
+class  PaginationSchema(Schema):
+    page = fields.Int(load_default=1, validate=validate.Range(min=1))
+    per_page = fields.Int(load_default=20, validate=validate.Range(min=1))
+
+
+
+#---- Schema para respuestas paginada ----#
+class PaginateProductoSchema(SQLAlchemyAutoSchema):
+    productos = fields.Nested(ProductoSchema, many=True)
+    total = fields.Int()
+    pages = fields.Int()
+
+    current_page = fields.Int()
+    per_page = fields.Int()
+    has_next = fields.Bool()
+    has_prev = fields.Bool()
+
+
 
 

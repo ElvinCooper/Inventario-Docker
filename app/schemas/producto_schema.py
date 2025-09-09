@@ -10,14 +10,14 @@ class ProductoSchema(Schema):
     nombre_producto = fields.Str(required=True)
     descripcion = fields.Str(required=True)
     codigo_barras = fields.Str(required=True)
-    precio = fields.Decimal(as_string=True)
+    precio = fields.Decimal(as_string=True, required=True)
     stock_minimo = fields.Int(required=True)
     stock_actual = fields.Int(required=True)
     id_categoria = fields.Str(required=True)
     imagen_url = fields.Url(allow_none=True)
     fecha_creacion = fields.DateTime(dump_only=True)
     fecha_actualizacion = fields.DateTime(dump_only=True)
-    status = fields.Bool()
+    status = fields.Bool(required=True)
 
 
 # ---- Schema para validation ----#
@@ -37,6 +37,23 @@ class PaginateProductoSchema(SQLAlchemyAutoSchema):
     per_page = fields.Int()
     has_next = fields.Bool()
     has_prev = fields.Bool()
+
+
+
+class ProductoUpdateSchema(Schema):
+    class Meta:
+        model = Producto
+        load_instance = True
+        sqla_session = db.session
+        partial = True
+        schema_name= "ProductoUpdateSchema"
+
+    nombre_producto    = fields.Str(required=False)
+    descripcion = fields.Str(required=False)
+    precio   = fields.Str(required=False)
+    stock_minimo = fields.Int(required=False)
+    stock_actual = fields.Int(required=False)
+    imagen_url = fields.Url(allow_none=True)
 
 
 

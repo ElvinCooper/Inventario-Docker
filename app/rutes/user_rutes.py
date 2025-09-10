@@ -19,7 +19,7 @@ usuario_bp = Blueprint('user', __name__, description='Operaciones con usuarios')
 #------------ Endpoint para consultar todos los usuarios del sistema ------------#
 @usuario_bp.route('/usuarios')
 class UserResource(MethodView):
-    @usuario_bp.response(HTTPStatus.OK, UserSimpleSchema)
+    @usuario_bp.response(HTTPStatus.OK, UserSimpleSchema(many=True))
     @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
     @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     # @jwt_required()

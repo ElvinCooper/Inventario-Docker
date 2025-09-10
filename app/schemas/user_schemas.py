@@ -24,8 +24,12 @@ class UserSimpleSchema(Schema):
         sqla_session = db.session
         schema_name = "UserSimpleSchema"
 
-        id_usuario = fields.Str(dump_only=True)
-        nombre = fields.Str()
-        email = fields.Email()
-        status = fields.Bool()
+    id_usuario = fields.Str(dump_only=True)
+    nombre = fields.Str()
+    email = fields.Email()
+    status = fields.Bool()
+    rol = fields.Str()
+    fecha_registro = fields.DateTime()
+    ultimo_acceso = fields.DateTime()
+    movimientos = fields.Str()
 

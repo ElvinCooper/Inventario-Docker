@@ -12,6 +12,7 @@ from flask.views import MethodView
 from ..models import Usuario
 from ..schemas.error_schema import ErrorSchema
 from ..schemas.user_schemas import UserSimpleSchema
+from flask import jsonify
 
 usuario_bp = Blueprint('user', __name__, description='Operaciones con usuarios')
 
@@ -28,6 +29,24 @@ class UserResource(MethodView):
         usuarios = Usuario.query.all()
 
         return usuarios
+
+# ------- Endpoint para consultar un usuario por su Id ----------#
+@usuario_bp.route('/usuario/<string:id_usuario>')
+class UserIdResource(MethodView):
+    @usuario_bp.response(HTTPStatus.OK, UserSimpleSchema)
+    @usuario_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Usuario no encontrado", example={"succes": False, "message": "Usuario no encontrado"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+
+    #@jwt_required()
+    def get(self, id_usuario):
+        """ Consultar un usuario por su Id"""
+        usuario = Usuario.query.filter_by(id_usuario=id_usuario).first()
+        if not usuario:
+            #abort(HTTPStatus.NOT_FOUND, errors={"message": "Usuario no encontrado"})
+            return jsonify({"succes": False, "message": "No existe ningun usuario con este Id"}), HTTPStatus.NOT_FOUND
+
+        return usuario
+
 
 
 

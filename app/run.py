@@ -6,6 +6,11 @@ from .models import Producto, Categoria
 from flask import jsonify
 from .rutes.productos_rutes import productos_bp
 from .rutes.user_rutes import usuario_bp
+from werkzeug.exceptions import HTTPException
+
+
+load_dotenv()
+app = Flask(__name__)
 
 def create_app():
     app = Flask(__name__)
@@ -20,12 +25,6 @@ def create_app():
     # Registrar blueprints de las rutas
     app.register_blueprint(productos_bp, url_prefix="/api/v1")
     app.register_blueprint(usuario_bp, url_prefix="/api/v1")
-
-    @app.get('/')
-    def home():
-        return '<h1> Hello World ! </h1>'
-
-
 
     return app
 

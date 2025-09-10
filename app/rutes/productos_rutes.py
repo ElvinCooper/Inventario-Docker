@@ -21,8 +21,6 @@ productos_bp = Blueprint('productos', __name__, description='Operaciones con pro
 
 @productos_bp.route("/productos")
 class ProductoResource(MethodView):
-
-    @productos_bp.arguments(PaginationSchema, location="query", as_kwargs=True)
     @productos_bp.response(HTTPStatus.OK, PaginateProductoSchema)
     #@jwt_required()  # validacion del token
     def get(self, page =1, per_page=10):
@@ -137,6 +135,7 @@ class ProductoResource(MethodView):
 class ProductoResource(MethodView):
     @productos_bp.arguments(ProductoUpdateSchema)
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
+    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrada", example={"success": False, "message": "No existe un producto con este Id"})
     def put(self, update_data, id_producto ):
         """ Actualizar un producto por su ID """
         #id_producto = Producto.query.get_or_404(id_producto)

@@ -4,7 +4,14 @@ from ..models import Usuario
 from ..extensions import db
 
 
-"""class UserSchema(SQLAlchemyAutoSchema):
+class UserSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Usuario
+        load_instance = True
+        sqla_session = db.session
+        include_fk = True
+        include_relationships = True
+
     id_usuario = fields.Str(dump_only=True)
     nombre = fields.Str(required=True)
     email = fields.Str(required=True)
@@ -13,8 +20,8 @@ from ..extensions import db
     fecha_registro = fields.DateTime(dump_only=True)
     ultimo_acceso = fields.DateTime(dump_only=True)
     status = fields.Bool(required=True)
-    movimientos = fields.Str(required=True) 
-"""
+    movimientos = fields.List(fields.Str(), dump_only=True)
+
 
 
 class UserSimpleSchema(Schema):
@@ -33,3 +40,55 @@ class UserSimpleSchema(Schema):
     ultimo_acceso = fields.DateTime()
     movimientos = fields.Str()
 
+
+
+
+class LoginSchema(Schema):
+    email = fields.Email(required=True)
+    password_hash = fields.String(required=True, validate=validate.Length(min=1))
+    schema_name = "UserLoginSchema"
+
+
+
+class LoginResponseSchema(Schema):
+    class Meta:
+        model = Usuario
+        load_instance = True
+        include_relationships = False  # No incluir relaciones en actualización
+        sqla_session = db.session
+        partial = True  # Para actualizaciones parciales
+        schema_name = "LoginSchema"
+
+    access_token = fields.String()
+    refresh_token = fields.String(required=False)
+    usuario = fields.Nested(UserSchema, only=('id_usuario', 'nombre', 'email', 'rol'))
+    message = fields.String()
+
+
+
+
+# --------------------- Schema para la respuesta del Logout ---------------------------------------#
+class LogoutResponseSchema(Schema):
+    class Meta:
+        model = Usuario
+        load_instance = True
+        include_relationships = False  # No incluir relaciones en actualización
+        sqla_session = db.session
+        partial = True  # Para actualizaciones parciales
+        schema_name = "UserLogoutSchema"
+
+    mensaje = fields.String()
+
+
+# --------------------- Schema para la respuesta del refresh token ---------------------------------------#
+class TokenRefreshResponseSchema(Schema):
+    class Meta:
+            model = Usuario
+            load_instance = True
+            include_relationships = False  # No incluir relaciones en actualización
+            sqla_session = db.session
+            partial = True  # Para actualizaciones parciales
+            schema_name = "TokenRefreshSchema"
+
+    acces_token = fields.String(required=True)
+    refresh_token = fields.String(required=True)

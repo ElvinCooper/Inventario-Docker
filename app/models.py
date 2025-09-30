@@ -98,8 +98,17 @@ class Proveedor (db.Model):
     direccion = db.Column(db.String(150), unique=True, nullable=False)
     fecha_registro = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     status = db.Column(db.Boolean, default=True)
-
     productos = db.relationship("ProductoProveedor", back_populates="proveedor")
+
+
+
+class TokenBlocklist(db.Model):
+    __tablename__ = "token_blocklist"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    jti = db.Column(db.String(36), nullable=False, index=True, unique=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
 
 
 

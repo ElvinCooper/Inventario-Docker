@@ -1,4 +1,6 @@
 import os
+from base64 import urlsafe_b64decode
+
 from flask import Flask
 from .extensions import init_extensions
 from dotenv import load_dotenv
@@ -6,6 +8,7 @@ from .models import Producto, Categoria
 from flask import jsonify
 from .rutes.productos_rutes import productos_bp
 from .rutes.user_rutes import usuario_bp
+from .rutes.movimientos_rutes import blp_movimientos
 from werkzeug.exceptions import HTTPException
 
 
@@ -25,6 +28,7 @@ def create_app():
     # Registrar blueprints de las rutas
     app.register_blueprint(productos_bp, url_prefix="/api/v1")
     app.register_blueprint(usuario_bp, url_prefix="/api/v1")
+    app.register_blueprint(blp_movimientos, url_prefix="/api/v1")
 
     return app
 

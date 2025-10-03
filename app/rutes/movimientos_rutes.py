@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required
 from flask.views import MethodView
 from ..models import Producto, Movimientos, Usuario
 from ..schemas.error_schema import ErrorSchema
-from ..schemas.movimientos_schema import PaginateMovimientoSchema
+from ..schemas.movimientos_schema import PaginateMovimientoSchema, MovimientoSchema
 
 
 blp_movimientos = Blueprint('movimientos', __name__, description='Operaciones con movimientos')
@@ -39,3 +39,17 @@ class MovimientoResource(MethodView):
             "has_prev": pagination.has_prev,
         }
 
+
+
+#-----------  Movimientos por su Id -----------#
+
+@blp_movimientos.route("/movimiento/<string:id_movimiento>")
+class ProductoResource(MethodView):
+    @blp_movimientos.response(HTTPStatus.OK, MovimientoSchema)
+    def get(self, id_movimiento):
+        """ Consultar los movimientos por su ID"""
+        movimiento = Movimientos.query.get_or_404(id_movimiento)
+        if not movimiento :
+            abort(HTTPStatus.NOT_FOUND, message="No existe un movimiento con el Id proveeido")
+
+        return movimiento

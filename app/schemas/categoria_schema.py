@@ -1,6 +1,6 @@
 from marshmallow import fields, validate, post_load, Schema
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from ..models import Producto, Movimientos, Usuario
+from ..models import Producto, Movimientos, Usuario, Categoria
 from ..extensions import db
 
 
@@ -25,3 +25,18 @@ class PaginateCategoriaSchema(SQLAlchemyAutoSchema):
     per_page = fields.Int()
     has_next = fields.Bool()
     has_prev = fields.Bool()
+
+
+
+
+
+class CategoriaUpdateSchema(Schema):
+    class Meta:
+        model = Categoria
+        load_instance = True
+        sqla_session = db.session
+        partial = True
+        schema_name= "CategoriaUpdateSchema"
+
+    nombre_categoria    = fields.Str(required=False)
+    descripcion_cat = fields.Str(required=False)

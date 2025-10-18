@@ -136,7 +136,7 @@ class ProductoResource(MethodView):
 class ProductoResource(MethodView):
     @productos_bp.arguments(ProductoUpdateSchema)
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
-    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrada", example={"success": False, "message": "No existe un producto con este Id"})
+    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrado", example={"success": False, "message": "No existe un producto con este Id"})
     def put(self, update_data, id_producto ):
         """ Actualizar un producto por su ID """
         #id_producto = Producto.query.get_or_404(id_producto)
@@ -165,14 +165,4 @@ class ProductoResource(MethodView):
 
         except Exception as err:
             db.session.rollback()
-            abort(HTTPStatus.BAD_REQUEST, message=f"Error al actualizar el post: {str(err)}")
-
-
-
-
-
-
-
-
-
-
+            abort(HTTPStatus.BAD_REQUEST, message=f"Error al actualizar el producto: {str(err)}")

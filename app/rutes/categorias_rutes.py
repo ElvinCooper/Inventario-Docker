@@ -9,9 +9,9 @@ from marshmallow.exceptions import ValidationError
 from flask_jwt_extended import jwt_required
 from flask.views import MethodView
 from ..models import Producto,  Usuario, Categoria
-from ..schemas.categoria_schema import PaginateCategoriaSchema, CategoriaSchema
+from ..schemas.categoria_schema import PaginateCategoriaSchema, CategoriaSchema, CategoriaUpdateSchema
 from ..schemas.error_schema import ErrorSchema
-from ..schemas.movimientos_schema import PaginateMovimientoSchema, MovimientoSchema
+
 
 
 blp_categorias = Blueprint('categorias', __name__, description='Operaciones con Categorias')
@@ -56,3 +56,37 @@ class CategoriaIdResource(MethodView):
             abort(HTTPStatus.NOT_FOUND, message="No existe una categoria con el Id proveeido")
 
         return categoria
+
+
+
+
+
+
+# ------ Actualizar una categoria existente ------#
+
+@blp_categorias.route("/categoria/update/<string:id_categoria>")
+class CategoriaUpdateResource(MethodView):
+    @blp_categorias.arguments(CategoriaUpdateSchema)
+    @blp_categorias.response(HTTPStatus.OK, CategoriaSchema)
+    @blp_categorias.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Categoria no encontrada", example={"success": False, "message": "No existe una categoria con este Id"})
+    def put(self, update_data, id_categoria ):
+        """ Actualizar una categoria por su ID """
+        #id_producto = Producto.query.get_or_404(id_producto)
+        categoria = db.session.get(Categoria, id_categoria)
+
+        if not categoria:
+            abort(HTTPStatus.NOT_FOUND, message="No existe una categoria con el Id proveeido")
+
+        try:
+            if update_data.get("nombre_categoria"):
+                categoria.nombre_categoria = update_data["nombre_categoria"]
+            if update_data.get("descripcion_cat"):
+                categoria.descripcion_cat = update_data["descripcion_cat"]
+
+
+            db.session.commit()
+            return categoria
+
+        except Exception as err:
+            db.session.rollback()
+            abort(HTTPStatus.BAD_REQUEST, message=f"Error al actualizar la categoria: {str(err)}")

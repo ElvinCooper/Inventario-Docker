@@ -9,6 +9,7 @@ from flask import jsonify
 from .rutes.productos_rutes import productos_bp
 from .rutes.user_rutes import usuario_bp
 from .rutes.movimientos_rutes import blp_movimientos
+from .rutes.categorias_rutes import blp_categorias
 from werkzeug.exceptions import HTTPException
 
 
@@ -29,6 +30,7 @@ def create_app():
     app.register_blueprint(productos_bp, url_prefix="/api/v1")
     app.register_blueprint(usuario_bp, url_prefix="/api/v1")
     app.register_blueprint(blp_movimientos, url_prefix="/api/v1")
+    app.register_blueprint(blp_categorias, url_prefix="/api/v1")
 
     return app
 

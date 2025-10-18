@@ -22,7 +22,7 @@ productos_bp = Blueprint('productos', __name__, description='Operaciones con pro
 @productos_bp.route("/productos")
 class ProductoResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, PaginateProductoSchema)
-    #@jwt_required()  # validacion del token
+    @jwt_required()  # validacion del token
     def get(self, page =1, per_page=10):
         """ Consultar todos los productos en el sistema"""
         pagination = Producto.query.paginate(
@@ -46,6 +46,7 @@ class ProductoResource(MethodView):
 @productos_bp.route("/productos/<string:id_producto>")
 class ProductoResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
+    @jwt_required()
     def get(self, id_producto):
         """ Consultar los productos por su ID"""
         producto = Producto.query.get_or_404(id_producto)

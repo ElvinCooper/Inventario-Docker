@@ -22,7 +22,7 @@ productos_bp = Blueprint('productos', __name__, description='Operaciones con pro
 @productos_bp.route("/productos")
 class ProductoResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, PaginateProductoSchema)
-    @jwt_required()  # validacion del token
+    @jwt_required()
     def get(self, page =1, per_page=10):
         """ Consultar todos los productos en el sistema"""
         pagination = Producto.query.paginate(
@@ -63,7 +63,7 @@ class CreateProductoResource(MethodView):
     @productos_bp.alt_response(HTTPStatus.BAD_REQUEST, schema=ErrorSchema, description="Solicitud inválida", example={"success": False, "message": "Ya existe un producto con ese código de barras"})
     @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Categoría no encontrada", example={"success": False, "message": "No existe esta categoria"})
     @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
-
+    @jwt_required()
 
     def post(self, data_producto):
         """ Ingresar un nuevo producto en el sistema"""
@@ -113,6 +113,7 @@ class CreateProductoResource(MethodView):
 @productos_bp.route("/productos/delete/<string:id_producto>")
 class ProductoResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
+    @jwt_required()
     def delete(self, id_producto):
         """ Eliminar un producto por su ID """
         producto = Producto.query.get_or_404(id_producto)
@@ -137,6 +138,7 @@ class ProductoResource(MethodView):
     @productos_bp.arguments(ProductoUpdateSchema)
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
     @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrado", example={"success": False, "message": "No existe un producto con este Id"})
+    @jwt_required()
     def put(self, update_data, id_producto ):
         """ Actualizar un producto por su ID """
         #id_producto = Producto.query.get_or_404(id_producto)

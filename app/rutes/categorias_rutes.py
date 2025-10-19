@@ -22,7 +22,7 @@ blp_categorias = Blueprint('categorias', __name__, description='Operaciones con 
 @blp_categorias.route("/categorias")
 class CategoriasResource(MethodView):
     @blp_categorias.response(HTTPStatus.OK, PaginateCategoriaSchema)
-    #@jwt_required()  # validacion del token
+    @jwt_required()
     def get(self, page =1, per_page=10):
         """ Consultar todas las categorias """
         pagination = Categoria.query.paginate(
@@ -94,8 +94,6 @@ class CreateCategoriaResource(MethodView):
             abort(HTTPStatus.INTERNAL_SERVER_ERROR, message=str(e))
 
 
-
-
 # ------ Actualizar una categoria existente ------#
 
 @blp_categorias.route("/categoria/update/<string:id_categoria>")
@@ -103,6 +101,7 @@ class CategoriaUpdateResource(MethodView):
     @blp_categorias.arguments(CategoriaUpdateSchema)
     @blp_categorias.response(HTTPStatus.OK, CategoriaSchema)
     @blp_categorias.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Categoria no encontrada", example={"success": False, "message": "No existe una categoria con este Id"})
+    @jwt_required()
     def put(self, update_data, id_categoria ):
         """ Actualizar una categoria por su ID """
         #id_producto = Producto.query.get_or_404(id_producto)
@@ -132,31 +131,10 @@ class CategoriaUpdateResource(MethodView):
 @blp_categorias.route("/categoria/delete/<string:id_categoria>")
 class CategoriaDeleteResource(MethodView):
     @blp_categorias.response(HTTPStatus.NO_CONTENT)
+    @jwt_required()
     def delete(self, id_categoria):
         """ Eliminar una categoria por su ID """
         categoria = Categoria.query.get_or_404(id_categoria)
         db.session.delete(categoria)
         db.session.commit()
         return
-
-# @blp_categorias.route("/categoria/delete/<string:id_categoria>")
-# class CategoriaDeleteResource(MethodView):
-#     @blp_categorias.response(HTTPStatus.OK, SuccessResponseSchema)
-#     def delete(self, id_categoria):
-#         """ Eliminar una categoria por su ID """
-#         categoria = Categoria.query.get_or_404(id_categoria)
-#
-#         # if not categoria:
-#         #     abort(HTTPStatus.NOT_FOUND, message="No existe una categoria con el Id proveeido")
-#
-#         try:
-#             db.session.delete(categoria)
-#             db.session.commit()
-#             return {
-#                 "success": True,
-#                 "message": f"Categoría '{categoria.nombre_categoria}' eliminada exitosamente"
-#             }, HTTPStatus.OK
-#
-#         except Exception as err:
-#             db.session.rollback()
-#             abort(HTTPStatus.INTERNAL_SERVER_ERROR, message=f"Error al eliminar la categoría: {str(err)}")

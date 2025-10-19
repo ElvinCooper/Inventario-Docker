@@ -5,8 +5,6 @@ from ..extensions import db
 
 
 
-
-
 class CategoriaSchema(Schema):
     id_categoria = fields.Str(dump_only=True)
     nombre_categoria = fields.Str(required=True)
@@ -27,9 +25,6 @@ class PaginateCategoriaSchema(SQLAlchemyAutoSchema):
     has_prev = fields.Bool()
 
 
-
-
-
 class CategoriaUpdateSchema(Schema):
     class Meta:
         model = Categoria
@@ -40,3 +35,8 @@ class CategoriaUpdateSchema(Schema):
 
     nombre_categoria    = fields.Str(required=False)
     descripcion_cat = fields.Str(required=False)
+
+
+class SuccessResponseSchema(Schema):
+    success = fields.Bool()
+    message = fields.Str()

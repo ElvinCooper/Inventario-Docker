@@ -43,6 +43,8 @@ class ProductoResource(MethodView):
 
 
 
+# ------ PRODUCTOS POR SU ID------#
+
 @productos_bp.route("/productos/<string:id_producto>")
 class ProductoResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
@@ -55,6 +57,11 @@ class ProductoResource(MethodView):
 
         return producto
 
+
+
+
+
+# ------  CREACION DE PRODUCTOS  ------#
 
 @productos_bp.route("/productos/create")
 class CreateProductoResource(MethodView):

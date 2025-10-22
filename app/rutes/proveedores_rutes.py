@@ -137,3 +137,19 @@ class ProveedorUpdateResource(MethodView):
         except Exception as err:
             db.session.rollback()
             abort(HTTPStatus.BAD_REQUEST, message=f"Error al actualizar el proveedor: {str(err)}")
+
+
+
+   # ---- Eliminar un proveedor existente  ----#
+
+@blp_proveedores.route("/proveedor/delete/<string:id_proveedor>")
+class ProveedorDeleteResource(MethodView):
+    @blp_proveedores.response(HTTPStatus.NO_CONTENT)
+    @jwt_required()
+    def delete(self, id_proveedor):
+        """ Eliminar un proveedor por su ID """
+        proveedor = Proveedor.query.get_or_404(id_proveedor, description="Proveedor no encontrado")
+
+        db.session.delete(proveedor)
+        db.session.commit()
+        return

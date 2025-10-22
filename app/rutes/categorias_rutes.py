@@ -134,7 +134,8 @@ class CategoriaDeleteResource(MethodView):
     @jwt_required()
     def delete(self, id_categoria):
         """ Eliminar una categoria por su ID """
-        categoria = Categoria.query.get_or_404(id_categoria)
+        categoria = Categoria.query.get_or_404(id_categoria, description="Categoria no encontrada")
+
         db.session.delete(categoria)
         db.session.commit()
         return

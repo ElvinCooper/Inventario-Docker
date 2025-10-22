@@ -11,6 +11,8 @@ from flask.views import MethodView
 from ..models import Producto, Categoria, Movimientos, ProductoProveedor
 from ..schemas.error_schema import ErrorSchema
 from ..schemas.producto_schema import ProductoSchema, PaginationSchema, PaginateProductoSchema, ProductoUpdateSchema
+from flask import request
+
 
 
 productos_bp = Blueprint('productos', __name__, description='Operaciones con productos')
@@ -57,6 +59,43 @@ class ProductoResource(MethodView):
 
         return producto
 
+
+
+# ------ PRODUCTOS POR SU CATEGORIA ------#
+
+@productos_bp.route("/productos/categoria/<string:id_categoria>")
+class ProductosCategoriaResource(MethodView):
+    @productos_bp.response(HTTPStatus.OK, PaginateProductoSchema)
+    @jwt_required()
+    def get(self, id_categoria, page =1, per_page=10):
+        """ Consultar los productos por su categoria """
+
+        # Obtener parámetros de paginación
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+
+        # Verificar que la categoría existe
+        Categoria.query.get_or_404(id_categoria, description="Categoría no encontrada")
+
+        # Paginar productos de la categoría
+        pagination = Producto.query.filter_by(id_categoria=id_categoria).paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
+
+        if not pagination.items:
+            abort(HTTPStatus.NOT_FOUND, message="No existen productos para esta categoría")
+
+        return {
+            "productos": pagination.items,
+            "total": pagination.total,
+            "pages": pagination.pages,
+            "current_page": pagination.page,
+            "per_page": pagination.per_page,
+            "has_next": pagination.has_next,
+            "has_prev": pagination.has_prev,
+        }
 
 
 

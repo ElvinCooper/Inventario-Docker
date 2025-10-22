@@ -1,0 +1,27 @@
+from marshmallow import fields, validate, post_load, Schema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from ..models import Proveedor
+from ..extensions import db
+
+
+
+class ProveedorSchema(Schema):
+    id_proveedor = fields.Str(dump_only=True)
+    nombre_proveedor = fields.Str(required=True)
+    contacto = fields.Str(required=True)
+    telefono = fields.Str(required=True)
+    email = fields.Str(required=True)
+    direccion = fields.Str(required=True)
+    fecha_registro = fields.DateTime(dump_only=True)
+
+
+#---- Schema para respuestas paginada ----#
+class PaginateProveedorSchema(SQLAlchemyAutoSchema):
+    proveedores = fields.Nested(ProveedorSchema, many=True)
+    total = fields.Int()
+    pages = fields.Int()
+
+    current_page = fields.Int()
+    per_page = fields.Int()
+    has_next = fields.Bool()
+    has_prev = fields.Bool()

@@ -10,6 +10,7 @@ from .rutes.productos_rutes import productos_bp
 from .rutes.user_rutes import usuario_bp
 from .rutes.movimientos_rutes import blp_movimientos
 from .rutes.categorias_rutes import blp_categorias
+from .rutes.proveedores_rutes import blp_proveedores
 from werkzeug.exceptions import HTTPException
 
 
@@ -26,11 +27,14 @@ def create_app():
     # Inicializar extensiones
     init_extensions(app)
 
+    prefijo_global = "/api/v1"
+
     # Registrar blueprints de las rutas
     app.register_blueprint(productos_bp, url_prefix="/api/v1")
     app.register_blueprint(usuario_bp, url_prefix="/api/v1")
     app.register_blueprint(blp_movimientos, url_prefix="/api/v1")
     app.register_blueprint(blp_categorias, url_prefix="/api/v1")
+    app.register_blueprint(blp_proveedores, url_prefix=prefijo_global)
 
     return app
 

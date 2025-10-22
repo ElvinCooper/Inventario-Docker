@@ -26,3 +26,21 @@ class PaginateProveedorSchema(SQLAlchemyAutoSchema):
     per_page = fields.Int()
     has_next = fields.Bool()
     has_prev = fields.Bool()
+
+
+
+
+class ProveedorUpdateSchema(Schema):
+    class Meta:
+        model = Proveedor
+        load_instance = True
+        sqla_session = db.session
+        partial = True
+        schema_name= "ProveedorUpdateSchema"
+
+    nombre_proveedor    = fields.Str(required=False)
+    contact = fields.Str(required=False)
+    telefono = fields.Str(required=False)
+    email = fields.Str(required=False)
+    direccion = fields.Str(required=False)
+    status = fields.Bool(required=False)

@@ -104,7 +104,7 @@ class CategoriaUpdateResource(MethodView):
     @jwt_required()
     def put(self, update_data, id_categoria ):
         """ Actualizar una categoria por su ID """
-        #id_producto = Producto.query.get_or_404(id_producto)
+
         categoria = db.session.get(Categoria, id_categoria)
 
         if not categoria:

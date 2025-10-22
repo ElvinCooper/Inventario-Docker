@@ -50,9 +50,7 @@ class MovimientoIdResource(MethodView):
     @jwt_required()
     def get(self, id_movimiento):
         """ Consultar los movimientos por su ID"""
-        movimiento = Movimientos.query.get_or_404(id_movimiento)
-        if not movimiento :
-            abort(HTTPStatus.NOT_FOUND, message="No existe un movimiento con el Id proveeido")
+        movimiento = Movimientos.query.get_or_404(id_movimiento, description="Movimiento no existe")
 
         return movimiento
 

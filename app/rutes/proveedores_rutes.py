@@ -11,12 +11,13 @@ from flask.views import MethodView
 from ..models import Proveedor, Producto, Usuario
 from ..schemas.error_schema import ErrorSchema
 from ..schemas.movimientos_schema import PaginateMovimientoSchema, MovimientoSchema
-from ..schemas.proveedor_schema import PaginateProveedorSchema
+from ..schemas.proveedor_schema import PaginateProveedorSchema, ProveedorSchema
 
 blp_proveedores = Blueprint('proveedores', __name__, description='Operaciones con Proveedores')
 
 
 
+#--------- Listar todos los proveedores ----------#
 @blp_proveedores.route('/proveedores')
 class ProveedoresResource(MethodView):
     @blp_proveedores.response(HTTPStatus.OK, PaginateProveedorSchema)
@@ -43,3 +44,17 @@ class ProveedoresResource(MethodView):
             "has_next": pagination.has_next,
             "has_prev": pagination.has_prev,
         }
+
+
+
+#-------------- Consultar proveedores por su Id ---------------#
+@blp_proveedores.route('/proveedores/<id_proveedor>')
+class ProveedoresIdResource(MethodView):
+    @blp_proveedores.response(HTTPStatus.OK, ProveedorSchema)
+    @jwt_required()
+    def get(self, id_proveedor):
+        """ Consultar los proveedores por su id """
+
+        proveedor = Proveedor.query.get_or_404(id_proveedor, description="Proveedor no existe")
+
+        return proveedor

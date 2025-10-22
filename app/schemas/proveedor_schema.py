@@ -8,11 +8,12 @@ from ..extensions import db
 class ProveedorSchema(Schema):
     id_proveedor = fields.Str(dump_only=True)
     nombre_proveedor = fields.Str(required=True)
-    contacto = fields.Str(required=True)
+    contact = fields.Str(required=True)
     telefono = fields.Str(required=True)
     email = fields.Str(required=True)
     direccion = fields.Str(required=True)
     fecha_registro = fields.DateTime(dump_only=True)
+    status = fields.Boolean(required=True)
 
 
 #---- Schema para respuestas paginada ----#

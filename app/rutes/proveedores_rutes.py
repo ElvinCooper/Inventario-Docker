@@ -58,3 +58,42 @@ class ProveedoresIdResource(MethodView):
         proveedor = Proveedor.query.get_or_404(id_proveedor, description="Proveedor no existe")
 
         return proveedor
+
+
+#------------- Crear un nuevo proveedor ------------------#
+
+@blp_proveedores.route("/proveedor/create")
+class CreateProveedorResource(MethodView):
+    @blp_proveedores.arguments(ProveedorSchema)
+    @blp_proveedores.response(HTTPStatus.CREATED, ProveedorSchema)
+    @blp_proveedores.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @jwt_required()
+
+    def post(self, data_proveedor):
+        """ Ingresar un nuevo proveedor en el sistema"""
+        try:
+
+            nuevo_proveedor = Proveedor(
+                id_proveedor=str(uuid.uuid4()),
+                nombre_proveedor=data_proveedor["nombre_proveedor"],
+                contact =data_proveedor["contact"],
+                telefono=data_proveedor["telefono"],
+                email=data_proveedor["email"],
+                direccion=data_proveedor["direccion"],
+                fecha_registro=datetime.now(timezone.utc),
+                status=data_proveedor["status"]
+
+            )
+
+            db.session.add(nuevo_proveedor)
+            db.session.commit()
+
+            return nuevo_proveedor, HTTPStatus.CREATED
+
+        except ValidationError as e:
+            abort(HTTPStatus.BAD_REQUEST, message=e.messages)
+
+        except Exception as e:
+            db.session.rollback()
+            print(f"ERROR: {e}")
+            abort(HTTPStatus.INTERNAL_SERVER_ERROR, message=str(e))

@@ -14,7 +14,9 @@ from ..schemas.user_schemas import UserSimpleSchema, LoginSchema, LoginResponseS
 from flask import jsonify, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.exceptions import HTTPException
-usuario_bp = Blueprint('user', __name__, description='Operaciones con usuarios')
+
+
+usuario_bp = Blueprint('Usuarios', __name__, description='Operaciones con usuarios')
 
 
 #------------ Endpoint para consultar todos los usuarios del sistema ------------#

@@ -13,7 +13,7 @@ from ..schemas.error_schema import ErrorSchema
 from ..schemas.movimientos_schema import PaginateMovimientoSchema, MovimientoSchema
 
 
-blp_movimientos = Blueprint('movimientos', __name__, description='Operaciones con movimientos')
+blp_movimientos = Blueprint('Movimientos', __name__, description='Operaciones con movimientos')
 
 #----------- CRUD Movimientos -----------#
 

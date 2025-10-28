@@ -12,7 +12,7 @@ from ..models import Producto,  Usuario, Categoria
 from ..schemas.categoria_schema import PaginateCategoriaSchema, CategoriaSchema, CategoriaUpdateSchema, SuccessResponseSchema
 from ..schemas.error_schema import ErrorSchema
 
-blp_categorias = Blueprint('categorias', __name__, description='Operaciones con Categorias')
+blp_categorias = Blueprint('Categorias', __name__, description='Operaciones con Categorias')
 
 
 

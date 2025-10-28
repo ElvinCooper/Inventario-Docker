@@ -15,7 +15,7 @@ from flask import request
 
 
 
-productos_bp = Blueprint('productos', __name__, description='Operaciones con productos')
+productos_bp = Blueprint('Productos', __name__, description='Operaciones con productos')
 
 
 # ------ CRUD PRODUCTOS ------#

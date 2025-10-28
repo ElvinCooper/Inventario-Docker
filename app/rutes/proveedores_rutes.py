@@ -13,7 +13,7 @@ from ..schemas.error_schema import ErrorSchema
 from ..schemas.movimientos_schema import PaginateMovimientoSchema, MovimientoSchema
 from ..schemas.proveedor_schema import PaginateProveedorSchema, ProveedorSchema, ProveedorUpdateSchema
 
-blp_proveedores = Blueprint('proveedores', __name__, description='Operaciones con Proveedores')
+blp_proveedores = Blueprint('Proveedores', __name__, description='Operaciones con Proveedores')
 
 
 

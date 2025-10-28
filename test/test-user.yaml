@@ -1,0 +1,71 @@
+version: "1.0"
+name: API REST Inventario
+config:
+  http: {}
+tests:
+  Usuarios:
+    steps:
+    - name: Registrar usuario
+      steps:
+          - name: Registrar nuevo usuario
+            http:
+              url: http://127.0.0.1:8000/usuarios
+              method: POST
+              headers:
+                Content-Type: application/json
+              json:
+                email: ${{env.EMAIL_USER}}
+                password: ${{env.EMAIL_PASS}}
+                nombre: ${{env.NOMBRE}}
+                telefono: ${{env.TELEFONO}}
+              responses:
+                status_code: 201
+                json:
+                  id_usuario: $user_id  # para guardar el id del usuario creado un la variable user_id
+              extract:
+                email: $.email
+    - name: Login de usuarios
+      http:
+          url: http://127.0.0.1:8000/auth/login
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            email: ${{env.EMAIL_USER}}
+            password_hash: ${{env.EMAIL_PASS}}
+          responses:
+            status_code: 200
+          captures:
+            access_token:
+              jsonpath: $.access_token
+            user_id:
+              jsonpath: $.user.id_usuario
+
+    - name: Logout de usuario
+      http:
+        url: http://127.0.0.1:8000/auth/logout
+        method: POST
+        headers:
+          Content-Type: application/json
+          Authorization: Bearer ${{captures.access_token}}
+        responses:
+          status: 200
+
+    - name: Consultar un usuario por su id
+      http:
+        url: http://127.0.0.1:8000/usuario/{{ captures.id_usuario }}
+        method: GET
+        headers:
+          Content-Type: application/json
+          accept: application/json
+      responses:
+        status_code: 200
+
+    - name: Operaciones con usuarios
+      http:
+        url: http://127.0.0.1:8000/usuarios
+        method: GET
+        headers:
+          Authorization: Bearer ${{captures.access_token}}
+        responses:
+          status_code: 200

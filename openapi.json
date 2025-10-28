@@ -1,0 +1,1621 @@
+{
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Ingrese su token JWT en el formato: Bearer <token>"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error code"
+          },
+          "status": {
+            "type": "string",
+            "description": "Error name"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "errors": {
+            "type": "object",
+            "description": "Errors",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaginationMetadata": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "first_page": {
+            "type": "integer"
+          },
+          "last_page": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "previous_page": {
+            "type": "integer"
+          },
+          "next_page": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Error1": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": false
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "UserSimple": {
+        "type": "object",
+        "properties": {
+          "id_usuario": {
+            "type": "string",
+            "readOnly": true
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "rol": {
+            "type": "string"
+          },
+          "fecha_registro": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ultimo_acceso": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "movimientos": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password_hash": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "email",
+          "password_hash"
+        ],
+        "additionalProperties": false
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id_usuario": {
+            "type": "string",
+            "readOnly": true
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "rol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "nombre",
+          "rol"
+        ],
+        "additionalProperties": false
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "usuario": {
+            "$ref": "#/components/schemas/User"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogoutResponse": {
+        "type": "object",
+        "properties": {
+          "mensaje": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenRefreshResponse": {
+        "type": "object",
+        "properties": {
+          "acces_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "acces_token",
+          "refresh_token"
+        ],
+        "additionalProperties": false
+      },
+      "Producto": {
+        "type": "object",
+        "properties": {
+          "id_producto": {
+            "type": "string",
+            "readOnly": true
+          },
+          "nombre_producto": {
+            "type": "string"
+          },
+          "descripcion": {
+            "type": "string"
+          },
+          "codigo_barras": {
+            "type": "string"
+          },
+          "precio": {
+            "type": "number"
+          },
+          "stock_minimo": {
+            "type": "integer"
+          },
+          "stock_actual": {
+            "type": "integer"
+          },
+          "id_categoria": {
+            "type": "string"
+          },
+          "imagen_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "fecha_creacion": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "fecha_actualizacion": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "codigo_barras",
+          "descripcion",
+          "id_categoria",
+          "nombre_producto",
+          "precio",
+          "status",
+          "stock_actual",
+          "stock_minimo"
+        ],
+        "additionalProperties": false
+      },
+      "PaginateProducto": {
+        "type": "object",
+        "properties": {
+          "productos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Producto"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "current_page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "has_next": {
+            "type": "boolean"
+          },
+          "has_prev": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductoUpdate": {
+        "type": "object",
+        "properties": {
+          "nombre_producto": {
+            "type": "string"
+          },
+          "descripcion": {
+            "type": "string"
+          },
+          "precio": {
+            "type": "string"
+          },
+          "stock_minimo": {
+            "type": "integer"
+          },
+          "stock_actual": {
+            "type": "integer"
+          },
+          "imagen_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Categoria": {
+        "type": "object",
+        "properties": {
+          "id_categoria": {
+            "type": "string",
+            "readOnly": true
+          },
+          "nombre_categoria": {
+            "type": "string"
+          },
+          "descripcion_cat": {
+            "type": "string"
+          },
+          "fecha_creacion": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "descripcion_cat",
+          "nombre_categoria",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "PaginateCategoria": {
+        "type": "object",
+        "properties": {
+          "categorias": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Categoria"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "current_page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "has_next": {
+            "type": "boolean"
+          },
+          "has_prev": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoriaUpdate": {
+        "type": "object",
+        "properties": {
+          "nombre_categoria": {
+            "type": "string"
+          },
+          "descripcion_cat": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Proveedor": {
+        "type": "object",
+        "properties": {
+          "id_proveedor": {
+            "type": "string",
+            "readOnly": true
+          },
+          "nombre_proveedor": {
+            "type": "string"
+          },
+          "contact": {
+            "type": "string"
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "direccion": {
+            "type": "string"
+          },
+          "fecha_registro": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "contact",
+          "direccion",
+          "email",
+          "nombre_proveedor",
+          "status",
+          "telefono"
+        ],
+        "additionalProperties": false
+      },
+      "PaginateProveedor": {
+        "type": "object",
+        "properties": {
+          "proveedores": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Proveedor"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "current_page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "has_next": {
+            "type": "boolean"
+          },
+          "has_prev": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProveedorUpdate": {
+        "type": "object",
+        "properties": {
+          "nombre_proveedor": {
+            "type": "string"
+          },
+          "contact": {
+            "type": "string"
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "direccion": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Movimiento": {
+        "type": "object",
+        "properties": {
+          "id_movimiento": {
+            "type": "string",
+            "readOnly": true
+          },
+          "id_productos": {
+            "type": "string"
+          },
+          "id_usuario": {
+            "type": "string"
+          },
+          "tipo_movimiento": {
+            "type": "string"
+          },
+          "cantidad": {
+            "type": "integer"
+          },
+          "precio_unitario": {
+            "type": "number"
+          },
+          "motivo": {
+            "type": "string"
+          },
+          "referencia": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "fecha_movimiento": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "observaciones": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "cantidad",
+          "id_productos",
+          "id_usuario",
+          "motivo",
+          "precio_unitario",
+          "tipo_movimiento"
+        ],
+        "additionalProperties": false
+      },
+      "PaginateMovimiento": {
+        "type": "object",
+        "properties": {
+          "movimientos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Movimiento"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "current_page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "has_next": {
+            "type": "boolean"
+          },
+          "has_prev": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "responses": {
+      "DEFAULT_ERROR": {
+        "description": "Default error response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UNPROCESSABLE_ENTITY": {
+        "description": "Unprocessable Entity",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/usuarios": {
+      "get": {
+        "responses": {
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "succes": false,
+                  "message": "Error interno del servidor"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "succes": false,
+                  "message": "No autorizado"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserSimple"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar todos los usuarios del sistema",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/api/v1/usuario/{id_usuario}": {
+      "get": {
+        "responses": {
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "succes": false,
+                  "message": "Error interno del servidor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "succes": false,
+                  "message": "Usuario no encontrado"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSimple"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar un usuario por su Id",
+        "tags": [
+          "Usuarios"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_usuario",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "500": {
+            "description": "Error al generar token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Error interno del servidor"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No esta autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "No esta autorizado"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "summary": "Login de usuarios",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Logout usuarios",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenRefreshResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Renovar los tokens",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/api/v1/productos": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginateProducto"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar todos los productos en el sistema",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/api/v1/productos/{id_producto}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Producto"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar los productos por su ID",
+        "tags": [
+          "Productos"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_producto",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/productos/categoria/{id_categoria}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginateProducto"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar los productos por su categoria",
+        "tags": [
+          "Productos"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_categoria",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/productos/create": {
+      "post": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "succes": false,
+                  "message": "Error interno del servidor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categor\u00eda no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "No existe esta categoria"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inv\u00e1lida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Ya existe un producto con ese c\u00f3digo de barras"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Producto"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Producto"
+              }
+            }
+          }
+        },
+        "summary": "Ingresar un nuevo producto en el sistema",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/api/v1/productos/delete/{id_producto}": {
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Producto"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Eliminar un producto por su ID",
+        "tags": [
+          "Productos"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_producto",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/productos/update/{id_producto}": {
+      "put": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "404": {
+            "description": "Producto no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "No existe un producto con este Id"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Producto"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductoUpdate"
+              }
+            }
+          }
+        },
+        "summary": "Actualizar un producto por su ID",
+        "tags": [
+          "Productos"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_producto",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/categorias": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginateCategoria"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar todas las categorias",
+        "tags": [
+          "Categorias"
+        ]
+      }
+    },
+    "/api/v1/categoria/{id_categoria}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Categoria"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar las categoria por su ID",
+        "tags": [
+          "Categorias"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_categoria",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/categoria/create": {
+      "post": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "succes": false,
+                  "message": "Error interno del servidor"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Categoria"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Categoria"
+              }
+            }
+          }
+        },
+        "summary": "Ingresar una nueva categoria en el sistema",
+        "tags": [
+          "Categorias"
+        ]
+      }
+    },
+    "/api/v1/categoria/update/{id_categoria}": {
+      "put": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "404": {
+            "description": "Categoria no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "No existe una categoria con este Id"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Categoria"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoriaUpdate"
+              }
+            }
+          }
+        },
+        "summary": "Actualizar una categoria por su ID",
+        "tags": [
+          "Categorias"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_categoria",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/categoria/delete/{id_categoria}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Eliminar una categoria por su ID",
+        "tags": [
+          "Categorias"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_categoria",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/proveedores": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginateProveedor"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar todos los proveedores",
+        "tags": [
+          "Proveedores"
+        ]
+      }
+    },
+    "/api/v1/proveedores/{id_proveedor}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Proveedor"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar los proveedores por su id",
+        "tags": [
+          "Proveedores"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_proveedor",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/proveedor/create": {
+      "post": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "succes": false,
+                  "message": "Error interno del servidor"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Proveedor"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Proveedor"
+              }
+            }
+          }
+        },
+        "summary": "Ingresar un nuevo proveedor en el sistema",
+        "tags": [
+          "Proveedores"
+        ]
+      }
+    },
+    "/api/v1/proveedor/update/{id_proveedor}": {
+      "put": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "404": {
+            "description": "Proveedor no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "No existe un proveedor con este Id"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Proveedor"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProveedorUpdate"
+              }
+            }
+          }
+        },
+        "summary": "Actualizar un proveedor por su ID",
+        "tags": [
+          "Proveedores"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_proveedor",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/proveedor/delete/{id_proveedor}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Eliminar un proveedor por su ID",
+        "tags": [
+          "Proveedores"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_proveedor",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/movimientos": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginateMovimiento"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar todos los movimientos en el sistema",
+        "tags": [
+          "Movimientos"
+        ]
+      }
+    },
+    "/api/v1/movimiento/{id_movimiento}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Movimiento"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar los movimientos por su ID",
+        "tags": [
+          "Movimientos"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_movimiento",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/movimientos/{id_usuario}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginateMovimiento"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar todos los movimientos de un usuario",
+        "tags": [
+          "Movimientos"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id_usuario",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "/api/v1/tipos-movimientos/{tipo_movimiento}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginateMovimiento"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "summary": "Consultar los movimientos por su tipo",
+        "tags": [
+          "Movimientos"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "tipo_movimiento",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    }
+  },
+  "info": {
+    "title": "API REST Inventario",
+    "version": "v1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Usuarios",
+      "description": "Operaciones con usuarios"
+    },
+    {
+      "name": "Productos",
+      "description": "Operaciones con productos"
+    },
+    {
+      "name": "Categorias",
+      "description": "Operaciones con Categorias"
+    },
+    {
+      "name": "Proveedores",
+      "description": "Operaciones con Proveedores"
+    },
+    {
+      "name": "Movimientos",
+      "description": "Operaciones con movimientos"
+    }
+  ],
+  "openapi": "3.0.3"
+}

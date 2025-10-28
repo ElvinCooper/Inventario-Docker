@@ -1,0 +1,711 @@
+version: "1.0"
+name: API REST Inventario
+config:
+  http: {}
+tests:
+  Usuarios:
+    name: Operaciones con usuarios
+    steps:
+      - name: Consultar todos los usuarios del sistema
+        http:
+          url: /api/v1/usuarios
+          method: GET
+          check:
+            status: 200
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/UserSimple"
+      - name: Consultar un usuario por su Id
+        http:
+          url: /api/v1/usuario/{id_usuario}
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/UserSimple"
+      - name: Login de usuarios
+        http:
+          url: /api/v1/auth/login
+          method: POST
+          headers:
+            Content-Type: application/json
+            accept: application/json
+          json:
+            email: Fly5PVBTXEW@arTzic.qfm
+            password_hash: elit consequat Lorem laboris
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/LoginResponse"
+      - name: Logout usuarios
+        http:
+          url: /api/v1/auth/logout
+          method: POST
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/LogoutResponse"
+      - name: Renovar los tokens
+        http:
+          url: /api/v1/auth/refresh
+          method: POST
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/TokenRefreshResponse"
+  default:
+    name: Default
+    steps:
+      - http:
+          url: /api/v1/usuario/{id_usuario}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/productos/{id_producto}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/productos/categoria/{id_categoria}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/productos/delete/{id_producto}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/productos/update/{id_producto}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/categoria/{id_categoria}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/categoria/update/{id_categoria}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/categoria/delete/{id_categoria}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/proveedores/{id_proveedor}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/proveedor/update/{id_proveedor}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/proveedor/delete/{id_proveedor}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/movimiento/{id_movimiento}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/movimientos/{id_usuario}
+          method: PARAMETERS
+      - http:
+          url: /api/v1/tipos-movimientos/{tipo_movimiento}
+          method: PARAMETERS
+  Productos:
+    name: Operaciones con productos
+    steps:
+      - name: Consultar todos los productos en el sistema
+        http:
+          url: /api/v1/productos
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/PaginateProducto"
+      - name: Consultar los productos por su ID
+        http:
+          url: /api/v1/productos/{id_producto}
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Producto"
+      - name: Consultar los productos por su categoria
+        http:
+          url: /api/v1/productos/categoria/{id_categoria}
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/PaginateProducto"
+      - name: Ingresar un nuevo producto en el sistema
+        http:
+          url: /api/v1/productos/create
+          method: POST
+          headers:
+            Content-Type: application/json
+            accept: application/json
+          json:
+            id_producto: incididunt exercitation nostrud cillum
+            nombre_producto: amet culpa ut
+            descripcion: mollit non
+            codigo_barras: dolor Excepteur sit
+            precio: -64272570.6474744
+            stock_minimo: 54593961
+            stock_actual: 55995851
+            id_categoria: consequat tempor deserunt dolor
+            fecha_creacion: "1966-10-08T16:04:07.0Z"
+            fecha_actualizacion: "1927-11-29T13:45:35.0Z"
+            status: true
+          check:
+            status: 201
+            schema:
+              $ref: "#/components/schemas/Producto"
+      - name: Eliminar un producto por su ID
+        http:
+          url: /api/v1/productos/delete/{id_producto}
+          method: DELETE
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Producto"
+      - name: Actualizar un producto por su ID
+        http:
+          url: /api/v1/productos/update/{id_producto}
+          method: PUT
+          headers:
+            Content-Type: application/json
+            accept: application/json
+          json:
+            nombre_producto: dolor laboris labore sed qui
+            imagen_url: https://QvflGiUwQsTiZCqtnZamNWp.xmicHc.hezlcutPZfX73kRD
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Producto"
+  Categorias:
+    name: Operaciones con Categorias
+    steps:
+      - name: Consultar todas las categorias
+        http:
+          url: /api/v1/categorias
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/PaginateCategoria"
+      - name: Consultar las categoria por su ID
+        http:
+          url: /api/v1/categoria/{id_categoria}
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Categoria"
+      - name: Ingresar una nueva categoria en el sistema
+        http:
+          url: /api/v1/categoria/create
+          method: POST
+          headers:
+            Content-Type: application/json
+            accept: application/json
+          json:
+            id_categoria: aliqua
+            nombre_categoria: nostrud officia pariatur sint proident
+            descripcion_cat: dolor in
+            fecha_creacion: "1911-02-18T02:49:30.0Z"
+            status: false
+          check:
+            status: 201
+            schema:
+              $ref: "#/components/schemas/Categoria"
+      - name: Actualizar una categoria por su ID
+        http:
+          url: /api/v1/categoria/update/{id_categoria}
+          method: PUT
+          headers:
+            Content-Type: application/json
+            accept: application/json
+          json:
+            nombre_categoria: occaecat
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Categoria"
+      - name: Eliminar una categoria por su ID
+        http:
+          url: /api/v1/categoria/delete/{id_categoria}
+          method: DELETE
+          check:
+            status: 204
+  Proveedores:
+    name: Operaciones con Proveedores
+    steps:
+      - name: Consultar todos los proveedores
+        http:
+          url: /api/v1/proveedores
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/PaginateProveedor"
+      - name: Consultar los proveedores por su id
+        http:
+          url: /api/v1/proveedores/{id_proveedor}
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Proveedor"
+      - name: Ingresar un nuevo proveedor en el sistema
+        http:
+          url: /api/v1/proveedor/create
+          method: POST
+          headers:
+            Content-Type: application/json
+            accept: application/json
+          json:
+            id_proveedor: enim
+            nombre_proveedor: esse Lorem amet dolore minim
+            contact: eiusmod proident
+            telefono: pariatur in dolore aliquip in
+            email: Duis
+            direccion: proident sint aliquip
+            fecha_registro: "1960-08-13T02:49:02.0Z"
+            status: false
+          check:
+            status: 201
+            schema:
+              $ref: "#/components/schemas/Proveedor"
+      - name: Actualizar un proveedor por su ID
+        http:
+          url: /api/v1/proveedor/update/{id_proveedor}
+          method: PUT
+          headers:
+            Content-Type: application/json
+            accept: application/json
+          json:
+            nombre_proveedor: elit dolor
+            contact: in Excepteur ut magna
+            telefono: sed ea amet dolor
+            email: anim deserunt eu
+            direccion: consectetur irure deserunt enim
+            status: true
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Proveedor"
+      - name: Eliminar un proveedor por su ID
+        http:
+          url: /api/v1/proveedor/delete/{id_proveedor}
+          method: DELETE
+          check:
+            status: 204
+  Movimientos:
+    name: Operaciones con movimientos
+    steps:
+      - name: Consultar todos los movimientos en el sistema
+        http:
+          url: /api/v1/movimientos
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/PaginateMovimiento"
+      - name: Consultar los movimientos por su ID
+        http:
+          url: /api/v1/movimiento/{id_movimiento}
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Movimiento"
+      - name: Consultar todos los movimientos de un usuario
+        http:
+          url: /api/v1/movimientos/{id_usuario}
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/PaginateMovimiento"
+      - name: Consultar los movimientos por su tipo
+        http:
+          url: /api/v1/tipos-movimientos/{tipo_movimiento}
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/PaginateMovimiento"
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+        status:
+          type: string
+          description: Error name
+        message:
+          type: string
+          description: Error message
+        errors:
+          type: object
+          description: Errors
+          additionalProperties: {}
+      additionalProperties: false
+    PaginationMetadata:
+      type: object
+      properties:
+        total:
+          type: integer
+        total_pages:
+          type: integer
+        first_page:
+          type: integer
+        last_page:
+          type: integer
+        page:
+          type: integer
+        previous_page:
+          type: integer
+        next_page:
+          type: integer
+      additionalProperties: false
+    Error1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        message:
+          type: string
+      required:
+        - message
+      additionalProperties: false
+    UserSimple:
+      type: object
+      properties:
+        id_usuario:
+          type: string
+          readOnly: true
+        nombre:
+          type: string
+        email:
+          type: string
+          format: email
+        status:
+          type: boolean
+        rol:
+          type: string
+        fecha_registro:
+          type: string
+          format: date-time
+        ultimo_acceso:
+          type: string
+          format: date-time
+        movimientos:
+          type: string
+      additionalProperties: false
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password_hash:
+          type: string
+          minLength: 1
+      required:
+        - email
+        - password_hash
+      additionalProperties: false
+    User:
+      type: object
+      properties:
+        id_usuario:
+          type: string
+          readOnly: true
+        nombre:
+          type: string
+        email:
+          type: string
+        rol:
+          type: string
+      required:
+        - email
+        - nombre
+        - rol
+      additionalProperties: false
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        usuario:
+          $ref: "#/components/schemas/User"
+        message:
+          type: string
+      additionalProperties: false
+    LogoutResponse:
+      type: object
+      properties:
+        mensaje:
+          type: string
+      additionalProperties: false
+    TokenRefreshResponse:
+      type: object
+      properties:
+        acces_token:
+          type: string
+        refresh_token:
+          type: string
+      required:
+        - acces_token
+        - refresh_token
+      additionalProperties: false
+    Producto:
+      type: object
+      properties:
+        id_producto:
+          type: string
+          readOnly: true
+        nombre_producto:
+          type: string
+        descripcion:
+          type: string
+        codigo_barras:
+          type: string
+        precio:
+          type: number
+        stock_minimo:
+          type: integer
+        stock_actual:
+          type: integer
+        id_categoria:
+          type: string
+        imagen_url:
+          type: string
+          format: uri
+          nullable: true
+        fecha_creacion:
+          type: string
+          format: date-time
+          readOnly: true
+        fecha_actualizacion:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          type: boolean
+      required:
+        - codigo_barras
+        - descripcion
+        - id_categoria
+        - nombre_producto
+        - precio
+        - status
+        - stock_actual
+        - stock_minimo
+      additionalProperties: false
+    PaginateProducto:
+      type: object
+      properties:
+        productos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Producto"
+        total:
+          type: integer
+        pages:
+          type: integer
+        current_page:
+          type: integer
+        per_page:
+          type: integer
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+      additionalProperties: false
+    ProductoUpdate:
+      type: object
+      properties:
+        nombre_producto:
+          type: string
+        descripcion:
+          type: string
+        precio:
+          type: string
+        stock_minimo:
+          type: integer
+        stock_actual:
+          type: integer
+        imagen_url:
+          type: string
+          format: uri
+          nullable: true
+      additionalProperties: false
+    Categoria:
+      type: object
+      properties:
+        id_categoria:
+          type: string
+          readOnly: true
+        nombre_categoria:
+          type: string
+        descripcion_cat:
+          type: string
+        fecha_creacion:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          type: boolean
+      required:
+        - descripcion_cat
+        - nombre_categoria
+        - status
+      additionalProperties: false
+    PaginateCategoria:
+      type: object
+      properties:
+        categorias:
+          type: array
+          items:
+            $ref: "#/components/schemas/Categoria"
+        total:
+          type: integer
+        pages:
+          type: integer
+        current_page:
+          type: integer
+        per_page:
+          type: integer
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+      additionalProperties: false
+    CategoriaUpdate:
+      type: object
+      properties:
+        nombre_categoria:
+          type: string
+        descripcion_cat:
+          type: string
+      additionalProperties: false
+    Proveedor:
+      type: object
+      properties:
+        id_proveedor:
+          type: string
+          readOnly: true
+        nombre_proveedor:
+          type: string
+        contact:
+          type: string
+        telefono:
+          type: string
+        email:
+          type: string
+        direccion:
+          type: string
+        fecha_registro:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          type: boolean
+      required:
+        - contact
+        - direccion
+        - email
+        - nombre_proveedor
+        - status
+        - telefono
+      additionalProperties: false
+    PaginateProveedor:
+      type: object
+      properties:
+        proveedores:
+          type: array
+          items:
+            $ref: "#/components/schemas/Proveedor"
+        total:
+          type: integer
+        pages:
+          type: integer
+        current_page:
+          type: integer
+        per_page:
+          type: integer
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+      additionalProperties: false
+    ProveedorUpdate:
+      type: object
+      properties:
+        nombre_proveedor:
+          type: string
+        contact:
+          type: string
+        telefono:
+          type: string
+        email:
+          type: string
+        direccion:
+          type: string
+        status:
+          type: boolean
+      additionalProperties: false
+    Movimiento:
+      type: object
+      properties:
+        id_movimiento:
+          type: string
+          readOnly: true
+        id_productos:
+          type: string
+        id_usuario:
+          type: string
+        tipo_movimiento:
+          type: string
+        cantidad:
+          type: integer
+        precio_unitario:
+          type: number
+        motivo:
+          type: string
+        referencia:
+          type: string
+          format: uri
+          nullable: true
+        fecha_movimiento:
+          type: string
+          format: date-time
+          readOnly: true
+        observaciones:
+          type: string
+          nullable: true
+      required:
+        - cantidad
+        - id_productos
+        - id_usuario
+        - motivo
+        - precio_unitario
+        - tipo_movimiento
+      additionalProperties: false
+    PaginateMovimiento:
+      type: object
+      properties:
+        movimientos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Movimiento"
+        total:
+          type: integer
+        pages:
+          type: integer
+        current_page:
+          type: integer
+        per_page:
+          type: integer
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+      additionalProperties: false

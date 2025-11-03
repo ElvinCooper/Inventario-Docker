@@ -35,7 +35,6 @@ def create_app():
     # Inicializar extensiones
     init_extensions(app)
 
-    Migrate(app, db)
 
     # Registrar blueprints de las rutas
     api.register_blueprint(usuario_bp, url_prefix="/api/v1")
@@ -50,4 +49,4 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    create_app().run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)

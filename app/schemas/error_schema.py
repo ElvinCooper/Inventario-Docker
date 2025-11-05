@@ -4,3 +4,4 @@ from marshmallow import Schema, fields
 class ErrorSchema(Schema):
     success = fields.Boolean(load_default=False)
     message = fields.Str(required=True)
+

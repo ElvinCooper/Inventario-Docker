@@ -39,3 +39,13 @@ class DevelopmentConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+
+
+class TestingConfig(BaseConfig):
+    # DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "SQLALCHEMY_TEST_URI",
+        "postgresql://test_user:test_password@localhost:5434/test_inventory",
+    )
+
+    TESTING = True

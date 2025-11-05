@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*$py.class
 
 # Entornos virtuales
 env/
@@ -25,3 +26,9 @@ venv/
 # Git
 .git
 .gitignore
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover

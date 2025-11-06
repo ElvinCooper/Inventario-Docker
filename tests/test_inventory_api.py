@@ -145,55 +145,37 @@ class TestProductEndpoints:
         assert get_response.status_code == 404
 
 
-# class TestCategoryEndpoints:
-#     """Tests para endpoints de categorías"""
-#
-#     def test_get_all_categories(self, client, sample_category):
-#         """Test: Obtener todas las categorías"""
-#         response = client.get('/api/categories')
-#
-#         assert response.status_code == 200
-#         data = response.get_json()
-#         assert len(data) >= 1
-#         assert data[0]['name'] == 'Electronics'
-#
-#     def test_create_category(self, client, auth_headers):
-#         """Test: Crear una nueva categoría"""
-#         new_category = {
-#             'name': 'Books',
-#             'description': 'Books and publications'
-#         }
-#
-#         response = client.post(
-#             '/api/categories',
-#             json=new_category,
-#             headers=auth_headers
-#         )
-#
-#         assert response.status_code == 201
-#         data = response.get_json()
-#         assert data['name'] == 'Books'
-#
-#
-# class TestInventoryEndpoints:
-#     """Tests para endpoints de inventario"""
-#
-#     def test_get_low_stock_products(self, client, db, sample_category):
-#         """Test: Obtener productos con stock bajo"""
-#         # Crear producto con stock bajo
-#         low_stock_product = Product(
-#             name='Low Stock Item',
-#             description='Test',
-#             price=10.00,
-#             stock=2,  # Stock bajo
-#             category_id=sample_category.id
-#         )
-#         db.session.add(low_stock_product)
-#         db.session.commit()
-#
-#         response = client.get('/api/inventory/low-stock')
-#
-#         assert response.status_code == 200
-#         data = response.get_json()
-#         assert len(data) >= 1
-#         assert any(p['name'] == 'Low Stock Item' for p in data)
+class TestCategoryEndpoints:
+    """Tests para endpoints de categorías"""
+
+    def test_get_all_categories(self, client, sample_category, auth_headers):
+        """Test: Obtener todas las categorías"""
+        response = client.get('/api/v1/categorias', headers=auth_headers)
+
+        assert response.status_code == 200
+        data = response.get_json()
+
+        assert isinstance(data, dict)
+        assert data['total'] > 0
+
+        categories_list = data['categorias']
+        assert isinstance(categories_list, list)
+        assert len(categories_list) > 0
+
+    def test_create_category(self, client, auth_headers):
+        """Test: Crear una nueva categoría"""
+        new_category = {
+            'nombre_categoria': 'Books',
+            'descripcion_cat': 'Books and publications',
+            "status": True
+        }
+
+        response = client.post(
+            '/api/v1/categoria/create',
+            json=new_category,
+            headers=auth_headers
+        )
+
+        assert response.status_code == 201
+        data = response.get_json()
+        assert data['nombre_categoria'] == 'Books'

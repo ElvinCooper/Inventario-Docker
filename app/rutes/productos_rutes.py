@@ -187,7 +187,6 @@ class ProductoResource(MethodView):
     @jwt_required()
     def put(self, update_data, id_producto ):
         """ Actualizar un producto por su ID """
-        #id_producto = Producto.query.get_or_404(id_producto)
         producto = db.session.get(Producto, id_producto)
 
         if not producto:

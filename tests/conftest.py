@@ -2,13 +2,14 @@
 Configuración de fixtures para pytest.
 """
 import os
-
+from decimal import Decimal
 import pytest
 import subprocess
 import time
 from app.run import create_app
 from app.extensions import db as _db
 from app.models import Usuario, Producto, Categoria, Proveedor, Movimientos
+from werkzeug.security import generate_password_hash
 
 # ============================================
 # FIXTURES DE INFRAESTRUCTURA
@@ -128,9 +129,11 @@ def sample_user(db):
     user = Usuario(
         nombre='testuser',
         email='test@example.com',
-        # Asume que tienes un método para hashear contraseñas
-        # password_hash=generate_password_hash('testpassword')
+        rol="Administrador"
     )
+
+    user.set_password('testpassword')
+
     db.session.add(user)
     db.session.commit()
     return user
@@ -160,6 +163,12 @@ def sample_product(db, sample_category):
     product = Producto(
         nombre_producto='Laptop',
         descripcion='High-performance laptop',
+        imagen_url='https://example.com/laptop.jpg',
+        codigo_barras='7501234567890',
+        precio=Decimal('999.99'),
+        stock_minimo=25,
+        stock_actual=10,
+        id_categoria=sample_category.id_categoria,
         status=True
     )
     db.session.add(product)
@@ -172,14 +181,19 @@ def auth_token(client, sample_user):
     """
     Obtiene un token JWT válido para autenticación.
     """
+
     response = client.post('/api/v1/auth/login', json={
-        'email': 'testuser',
+        'email': 'test@example.com',
         'password_hash': 'testpassword'
     })
 
     if response.status_code == 200:
         data = response.get_json()
         return data.get('access_token')
+
+    print(f"\n--- DEBUG: Login falló en auth_token, Status: {response.status_code} ---")
+    print(f"--- DEBUG: Respuesta: {response.get_data(as_text=True)} ---")
+
     return None
 
 

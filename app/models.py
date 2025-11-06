@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 import uuid
 from .extensions import  db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # Modelo de tabla usuarios
@@ -10,12 +11,24 @@ class Usuario(db.Model):
     id_usuario = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     nombre = db.Column(db.String(100), nullable=False)
     email  = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
     rol = db.Column(db.String(40), nullable=False)
     fecha_registro = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     ultimo_acceso = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     status = db.Column(db.Boolean, default=True)
     movimientos = db.relationship("Movimientos", back_populates="usuario")
+
+    # --- Métodos de Contraseña ---
+
+    def set_password(self, password):
+        """Genera y guarda el hash de la contraseña."""
+        # Se puede llamar en el constructor o en la actualización
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Verifica una contraseña de texto plano contra el hash guardado."""
+        # Compara el hash en la DB (self.password_hash) con el texto plano provisto
+        return check_password_hash(self.password_hash, password)
 
 
 # Modelo de tabla movimientos
@@ -64,7 +77,7 @@ class Categoria (db.Model):
     __tablename__ = 'categorias'
 
     id_categoria = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    nombre_categoria = db.Column(db.String(100), nullable=False)
+    nombre_categoria = db.Column(db.String(100), unique=True ,nullable=False)
     descripcion_cat = db.Column(db.String(150), nullable=False)
     fecha_creacion = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     status = db.Column(db.Boolean, default=True)

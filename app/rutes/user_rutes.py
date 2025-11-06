@@ -66,8 +66,8 @@ def login_user(data_login):
             current_app.logger.warning(f"Intento de login con email inexistente: {data_login['email']}")
             return({"message":f"Credenciales Invalidas"}), HTTPStatus.UNAUTHORIZED
 
-        #if not check_password_hash(usuario.password_hash, data_login.get("password_hash")):
-        if usuario.password_hash != data_login['password_hash']:
+        if not check_password_hash(usuario.password_hash, data_login.get("password_hash")):
+        #if usuario.password_hash != data_login['password_hash']:
             return ({"message":"Credenciales Invalidas password"}), HTTPStatus.UNAUTHORIZED
 
         # Generar token de authentication

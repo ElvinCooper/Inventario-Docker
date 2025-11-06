@@ -69,6 +69,11 @@ class CreateCategoriaResource(MethodView):
 
     def post(self, data_categoria):
         """ Ingresar una nueva categoria en el sistema"""
+
+        nombre_categoria = Categoria.query.filter_by(nombre_categoria=data_categoria["nombre_categoria"]).first()
+        if nombre_categoria:
+            abort(HTTPStatus.CONFLICT, message=f"La categoria {nombre_categoria} ya existe")
+
         try:
 
             nueva_categoria = Categoria(

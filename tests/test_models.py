@@ -2,10 +2,11 @@
 Tests unitarios para los modelos de la base de datos.
 """
 from decimal import Decimal
+from werkzeug.security import generate_password_hash, check_password_hash
 import pytest
 from app.models import Producto, Categoria, Usuario, Proveedor, Movimientos
 
-# Marca estos tests como unitarios
+# Marcar tests como unitarios
 pytestmark = pytest.mark.unit
 
 
@@ -40,66 +41,68 @@ class TestProductModel:
         assert product.id_categoria == sample_category.id_categoria
         assert product.status == sample_category.status
 
-    # def test_product_repr(self, sample_product):
-    #     """Test: Representación en string del producto"""
-    #     # Ajusta según tu método __repr__
-    #     assert 'Laptop' in str(sample_product)
-    #
-    # def test_product_relationship_with_category(self, sample_product, sample_category):
-    #     """Test: Relación entre producto y categoría"""
-    #     assert sample_product.category_id == sample_category.id
-    #     assert sample_product.category.nombre_categoria == 'Electronics'
+    def test_product_repr(self, sample_product):
+        """Test: Representación en string del producto"""
+        assert sample_product.nombre_producto == 'Laptop'
+
+    def test_product_relationship_with_category(self, sample_product, sample_category):
+        """Test: Relación entre producto y categoría"""
+        assert sample_product.id_categoria == sample_category.id_categoria
+        assert sample_product.categoria.nombre_categoria == 'Electronics'
 
 
-# class TestCategoryModel:
-#     """Tests para el modelo Categoria"""
-#
-#     def test_create_category(self, db):
-#         """Test: Crear una categoría"""
-#         category = Categoria(
-#             nombre_categoria='Furniture',
-#             descripcion_cat='Home and office furniture'
-#         )
-#         db.session.add(category)
-#         db.session.commit()
-#
-#         assert category.id is not None
-#         assert category.nombre_categoria == 'Furniture'
+class TestCategoryModel:
+    """Tests para el modelo Categoria"""
 
-    #========= debo crear esta validacion al crear una nueva categoria para habilitar esta parte ==============
+    def test_create_category(self, db):
+        """Test: Crear una categoría"""
+        category = Categoria(
+            nombre_categoria='Furniture',
+            descripcion_cat='Home and office furniture'
+        )
+        db.session.add(category)
+        db.session.commit()
 
-    # def test_category_unique_name(self, db, sample_category):
-    #     """Test: Los nombres de categoría deben ser únicos"""
-    #     duplicate_category = Category(
-    #         name='Electronics',  # Nombre duplicado
-    #         description='Another electronics category'
-    #     )
-    #     db.session.add(duplicate_category)
-    #
-    #     # Debería lanzar una excepción por violación de unique constraint
-    #     with pytest.raises(Exception):
-    #         db.session.commit()
+        assert category.id_categoria is not None
+        assert category.nombre_categoria == 'Furniture'
 
 
-# class TestUserModel:
-#     """Tests para el modelo Usuario"""
-#
-#     def test_create_user(self, db):
-#         """Test: Crear un usuario"""
-#         user = Usuario(
-#             nombre='newuser',
-#             email='new@example.com'
-#         )
-#         db.session.add(user)
-#         db.session.commit()
-#
-#         assert user.id is not None
-#         assert user.nombre == 'newuser'
-#         assert user.email == 'new@example.com'
-#
-#     def test_password_hashing(self, sample_user):
-#         """Test: Las contraseñas deben estar hasheadas"""
-#
-#         assert sample_user.password_hash != 'testpassword'
-#         assert sample_user.check_password('testpassword') is True
-        #pass
+    def test_category_unique_name(self, client, auth_headers, sample_category):
+        """Test: Los nombres de categoría deben ser únicos"""
+
+        duplicate_category = {
+            "nombre_categoria":"Electronics",
+            "descripcion_cat":"Another electronics category",
+            "status":True
+        }
+
+        response = client.post("/api/v1/categoria/create",
+                               json=duplicate_category,
+                               headers=auth_headers)
+
+        assert response.status_code == 409
+
+
+class TestUserModel:
+    """Tests para el modelo Usuario"""
+
+    def test_create_user(self, db):
+        """Test: Crear un usuario"""
+        user = Usuario(
+            nombre='newuser',
+            email='new@example.com',
+            password_hash=generate_password_hash('testnewuser'),
+            rol="Administrador"
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        assert user.id_usuario is not None
+        assert user.nombre == 'newuser'
+        assert user.email == 'new@example.com'
+
+    def test_password_hashing(self, sample_user):
+        """Test: Las contraseñas deben estar hasheadas"""
+
+        assert sample_user.password_hash != 'testpassword'
+        assert sample_user.check_password('testpassword') is True

@@ -32,3 +32,9 @@ venv/
 .coverage
 htmlcov/
 *.cover
+
+# Ignorar archivos y carpetas que ya no quiero seguir
+.hypothesis/
+.openapi-generator/
+openapi_client/
+setup.cfg

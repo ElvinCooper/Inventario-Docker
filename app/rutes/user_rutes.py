@@ -25,7 +25,7 @@ class UserResource(MethodView):
     @usuario_bp.response(HTTPStatus.OK, UserSimpleSchema(many=True))
     @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
     @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         """ Consultar todos los usuarios del sistema """
         usuarios = Usuario.query.all()
@@ -38,8 +38,7 @@ class UserIdResource(MethodView):
     @usuario_bp.response(HTTPStatus.OK, UserSimpleSchema)
     @usuario_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Usuario no encontrado", example={"succes": False, "message": "Usuario no encontrado"})
     @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
-
-    #@jwt_required()
+    @jwt_required()
     def get(self, id_usuario):
         """ Consultar un usuario por su Id"""
         usuario = Usuario.query.filter_by(id_usuario=id_usuario).first()

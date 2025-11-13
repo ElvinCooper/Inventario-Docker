@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   test-db:
@@ -10,7 +9,7 @@ services:
       POSTGRES_PASSWORD: test_password
     ports:
       - "5434:5432"  # Puerto diferente para no conflictuar
-    tmpfs:
+    volumes:
       # BD en memoria RAM para velocidad
       - /var/lib/postgresql/data
     healthcheck:
@@ -20,6 +19,28 @@ services:
       retries: 5
     networks:
       - test-network
+
+  test-api:
+    build: .
+    container_name: inventory_test_api
+    environment:
+      FLASK_ENV: testing
+      PYTHONPATH: /app
+      SQLALCHEMY_DATABASE_URI: postgresql://test_user:test_password@test-db:5432/test_inventory
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./app:/app/app
+      - ./tests:/app/tests
+      - ./htmlcov:/app/htmlcov
+    networks:
+      - test-network
+    depends_on:
+      test-db:
+        condition: service_healthy
+    command: bash -c "cd /app && tail -f /dev/null"        #flask run --host=0.0.0.0 --port=8000
 
 networks:
   test-network:

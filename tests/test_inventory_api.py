@@ -2,7 +2,6 @@
 Tests de integración para los endpoints de la API.
 """
 import pytest
-from app.models import Producto
 from decimal import Decimal
 # Marcar tests como integración
 pytestmark = pytest.mark.integration

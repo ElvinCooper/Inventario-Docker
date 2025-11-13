@@ -36,7 +36,7 @@ if "%1"=="unit" (
     pytest tests/ -v -m unit --cov=app --cov-report=term-missing --cov-report=html
 ) else if "%1"=="integration" (
     echo Ejecutando solo tests de integración...
-    pytest tests/ -v -m integration --cov=app --cov-report=term-missing --cov-report=html
+    pytest tests/ --maxfail=1 -v -m integration --cov=app --cov-report=term-missing --cov-report=html
 ) else if "%1"=="fast" (
     echo Ejecutando tests en modo rápido...
     pytest tests/ -v --tb=short

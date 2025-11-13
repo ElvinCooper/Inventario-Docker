@@ -45,7 +45,7 @@ class TestingConfig(BaseConfig):
     # DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "SQLALCHEMY_TEST_URI",
-        "postgresql://test_user:test_password@localhost:5434/test_inventory",
+        "postgresql://test_user:test_password@test-db:5432/test_inventory",
     )
 
     TESTING = True

@@ -2,45 +2,52 @@
 Configuración de fixtures para pytest.
 """
 import os
+import sys
+
+# Agregar directorio raíz al path ANTES de imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+
 from decimal import Decimal
 import pytest
 import subprocess
 import time
-from app.run import create_app
-from app.extensions import db as _db
-from app.models import Usuario, Producto, Categoria, Proveedor, Movimientos
+from app.app.run import create_app
+from app.app.extensions import db as _db
+from app.app.models import Usuario, Producto, Categoria, Proveedor, Movimientos
 from werkzeug.security import generate_password_hash
+
 
 # ============================================
 # FIXTURES DE INFRAESTRUCTURA
 # ============================================
 
-@pytest.fixture(scope='session', autouse=True)
-def docker_db():
-    """
-    Inicia el contenedor de PostgreSQL antes de todos los tests
-    y lo detiene después de todos los tests.
-
-    scope='session': Se ejecuta UNA vez para toda la sesión de tests
-    autouse=True: Se ejecuta automáticamente sin necesidad de declararlo
-    """
-    print("\n Iniciando contenedor de PostgreSQL...")
-    subprocess.run(
-        ['docker-compose', '-f', 'docker-compose.test.yaml', 'up', '-d'],
-        check=True
-    )
-
-    # Esperar a que PostgreSQL esté listo
-    print(" Esperando a que PostgreSQL esté listo...")
-    time.sleep(5)
-
-    yield  # Aquí se ejecutan todos los tests
-
-    print("\n Deteniendo contenedor de PostgreSQL...")
-    subprocess.run(
-        ['docker-compose', '-f', 'docker-compose.test.yaml', 'down', '-v'],
-        check=True
-    )
+# @pytest.fixture(scope='session', autouse=True)
+# def docker_db():
+#     """
+#     Inicia el contenedor de PostgreSQL antes de todos los tests
+#     y lo detiene después de todos los tests.
+#
+#     scope='session': Se ejecuta UNA vez para toda la sesión de tests
+#     autouse=True: Se ejecuta automáticamente sin necesidad de declararlo
+#     """
+#     print("\n Iniciando contenedor de PostgreSQL...")
+#     subprocess.run(
+#         ['docker-compose', '-f', 'docker-compose.test.yaml', 'up', '-d'],
+#         check=True
+#     )
+#
+#     # Esperar a que PostgreSQL esté listo
+#     print(" Esperando a que PostgreSQL esté listo...")
+#     time.sleep(5)
+#
+#     yield  # Aquí se ejecutan todos los tests
+#
+#     print("\n Deteniendo contenedor de PostgreSQL...")
+#     subprocess.run(
+#         ['docker-compose', '-f', 'docker-compose.test.yaml', 'down', '-v'],
+#         check=True
+#     )
 
 
 @pytest.fixture(scope='session')
@@ -56,7 +63,7 @@ def app():
     # Configuración específica para testing
     app.config.update({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'postgresql://test_user:test_password@localhost:5434/test_inventory',
+        'SQLALCHEMY_DATABASE_URI': 'postgresql://test_user:test_password@test-db:5432/test_inventory',
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
         'JWT_SECRET_KEY': 'test-secret-key-do-not-use-in-production',
         'WTF_CSRF_ENABLED': False,
@@ -174,6 +181,50 @@ def sample_product(db, sample_category):
     db.session.add(product)
     db.session.commit()
     return product
+
+
+@pytest.fixture
+def sample_proveedor(db):
+    """
+    Crea un producto de ejemplo.
+
+    Nota que depende de sample_category (se ejecuta automáticamente).
+    """
+    proveedor = Proveedor(
+        id_proveedor=1,
+        nombre_proveedor='Tech Supplies Inc',
+        contact='555-1234',
+        direccion='123 Tech Street',
+        telefono='8294685123',
+        email='contact@techsupplies.com',
+        status=True
+    )
+    db.session.add(proveedor)
+    db.session.commit()
+    return proveedor
+
+
+@pytest.fixture
+def sample_movimiento(db, sample_user, sample_product):
+    """
+    Crea un producto de ejemplo.
+
+    Nota que depende de sample_category (se ejecuta automáticamente).
+    """
+    movimiento = Movimientos(
+        id_movimiento='1',
+        id_producto=sample_product.id_producto,
+        id_usuario=sample_user.id_usuario,
+        tipo_movimiento='Salida',
+        cantidad=50,
+        precio_unitario=24.95,
+        motivo='=venta',
+        referencia='ninguna',
+        observaciones='observaciones',
+    )
+    db.session.add(movimiento)
+    db.session.commit()
+    return movimiento
 
 
 @pytest.fixture

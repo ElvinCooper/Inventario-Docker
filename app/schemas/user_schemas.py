@@ -22,6 +22,28 @@ class UserSchema(SQLAlchemyAutoSchema):
     status = fields.Bool(required=True)
     movimientos = fields.List(fields.Str(), dump_only=True)
 
+# ------------------------  Schema para registrar un usuario ---------------------------------#
+class UserRegisterSchema(Schema):
+
+    nombre = fields.String(required=True, validate=validate.Length(min=1, max=60))
+    email = fields.Email(required=True)
+    password_hash = fields.String(required=True, validate=validate.Length(min=8, max=25), load_only=True)
+    telefono = fields.String(validate=validate.Length(max=15), allow_none=True)
+    rol = fields.Str(required=True)
+    status = fields.Bool(required=True)
+
+#------------------------- Schema para respuesta al registrar usuario --------------------------#
+class UserResponseSchema(Schema):
+    id_usuario = fields.String()
+    nombre = fields.String()
+    email = fields.Email()
+    telefono = fields.String(allow_none=True)
+    rol = fields.String()
+    ultimo_acceso = fields.DateTime()
+    fecha_registro = fields.DateTime(allow_none=True)
+    status = fields.Bool()
+
+
 
 
 class UserSimpleSchema(Schema):

@@ -11,6 +11,7 @@ class Usuario(db.Model):
     id_usuario = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     nombre = db.Column(db.String(100), nullable=False)
     email  = db.Column(db.String(50), unique=True, nullable=False)
+    telefono = db.Column(db.String(20), nullable=True)
     password_hash = db.Column(db.String(255), nullable=False)
     rol = db.Column(db.String(40), nullable=False)
     fecha_registro = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

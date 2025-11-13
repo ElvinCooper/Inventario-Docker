@@ -10,16 +10,58 @@ from flask_jwt_extended import jwt_required, create_access_token, create_refresh
 from flask.views import MethodView
 from ..models import Usuario, TokenBlocklist
 from ..schemas.error_schema import ErrorSchema
-from ..schemas.user_schemas import UserSimpleSchema, LoginSchema, LoginResponseSchema, LogoutResponseSchema, TokenRefreshResponseSchema
+from ..schemas.user_schemas import UserSimpleSchema, LoginSchema, LoginResponseSchema, LogoutResponseSchema, TokenRefreshResponseSchema, UserRegisterSchema, UserResponseSchema
 from flask import jsonify, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.exceptions import HTTPException
+import traceback
 
 
 usuario_bp = Blueprint('Usuarios', __name__, description='Operaciones con usuarios')
 
 
-#------------ Endpoint para consultar todos los usuarios del sistema ------------#
+#------------ Endpoint para registrar nuevos usuarios en el sistema ------------#
+
+@usuario_bp.route('/auth/register')
+class UsuarioRegister(MethodView):
+    #@limiter.limit("5 per minute")  # intentos por minuto
+    @usuario_bp.arguments(UserRegisterSchema)
+    @usuario_bp.response(HTTPStatus.CREATED, UserResponseSchema)
+    @usuario_bp.alt_response(HTTPStatus.CONFLICT, schema=ErrorSchema, description="Ya existe un usuario con ese email", example={"success": False, "message": "Ya existe un usuario con ese email"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"success": False, "message": "Error interno del servidor"})
+    def post(self, data_usuario):
+        """ Registrar un nuevo usuario """
+        try:
+            if Usuario.query.filter_by(email=data_usuario['email']).first():
+                abort(HTTPStatus.CONFLICT, message=f"Ya existe un usuario con ese email: '{data_usuario['email']}'")
+
+            # Crear el nuevo usuario
+            nuevo_usuario = Usuario(
+                id_usuario=str(uuid.uuid4()),
+                nombre=data_usuario['nombre'],
+                email=data_usuario['email'],
+                password_hash=generate_password_hash(data_usuario['password_hash']),
+                telefono=data_usuario['telefono'],
+                rol=data_usuario['rol'],
+                fecha_registro=datetime.now(timezone.utc),
+                status=data_usuario['status']
+            )
+
+            # Guardar el nuevo usuario
+            db.session.add(nuevo_usuario)
+            db.session.commit()
+
+            return nuevo_usuario, HTTPStatus.CREATED
+
+        except HTTPException as http_exc:
+            raise http_exc  # esto permite que pasen errores como 401, 400 etc...
+        except Exception as e:
+            current_app.logger.error(f"Error al registrar usuario: {str(e)}\n{traceback.format_exc()}")
+            db.session.rollback()
+            abort(HTTPStatus.INTERNAL_SERVER_ERROR, message=f"Error interno del servidor: {str(e)}")
+
+
+    #------------ Endpoint para consultar todos los usuarios del sistema ------------#
 @usuario_bp.route('/usuarios')
 class UserResource(MethodView):
     @usuario_bp.response(HTTPStatus.OK, UserSimpleSchema(many=True))
@@ -65,8 +107,8 @@ def login_user(data_login):
             current_app.logger.warning(f"Intento de login con email inexistente: {data_login['email']}")
             return({"message":f"Credenciales Invalidas"}), HTTPStatus.UNAUTHORIZED
 
-        if not check_password_hash(usuario.password_hash, data_login.get("password_hash")):
-        #if usuario.password_hash != data_login['password_hash']:
+        #if not check_password_hash(usuario.password_hash, data_login.get("password_hash")):
+        if usuario.password_hash != data_login['password_hash']:
             return ({"message":"Credenciales Invalidas password"}), HTTPStatus.UNAUTHORIZED
 
         # Generar token de authentication

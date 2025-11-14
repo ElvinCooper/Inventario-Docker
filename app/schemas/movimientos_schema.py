@@ -7,13 +7,12 @@ from ..extensions import db
 
 class MovimientoSchema(Schema):
     id_movimiento = fields.Str(dump_only=True)
-    id_productos  = fields.Str(required=True)
-    id_usuario    = fields.Str(required=True)
+    id_producto  = fields.Str(required=True)
     tipo_movimiento = fields.Str(required=True)
     cantidad = fields.Int(as_string=True, required=True)
     precio_unitario = fields.Decimal(as_string=True, required=True)
     motivo = fields.Str(required=True)
-    referencia = fields.Url(allow_none=True)
+    referencia = fields.Str(allow_none=True)
     fecha_movimiento = fields.DateTime(dump_only=True)
     observaciones = fields.Str(allow_none=True)
 

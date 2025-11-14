@@ -2,6 +2,7 @@
 Tests para autenticación y autorización.
 """
 import pytest
+from werkzeug.security import check_password_hash
 
 pytestmark = pytest.mark.integration
 
@@ -9,32 +10,38 @@ pytestmark = pytest.mark.integration
 class TestAuthentication:
     """Tests para login y registro"""
 
-    # def test_register_user(self, client):
-    #     """Test: Registrar un nuevo usuario"""
-    #     new_user = {
-    #         'username': 'newuser',
-    #         'email': 'newuser@example.com',
-    #         'password': 'securepassword123'
-    #     }
-    #
-    #     response = client.post('/api/auth/register', json=new_user)
-    #
-    #     assert response.status_code == 201
-    #     data = response.get_json()
-    #     assert 'id' in data
-    #     assert data['username'] == 'newuser'
-    #
-    # def test_register_duplicate_username(self, client, sample_user):
-    #     """Test: No se puede registrar username duplicado"""
-    #     duplicate_user = {
-    #         'username': 'testuser',  # Ya existe
-    #         'email': 'another@example.com',
-    #         'password': 'password123'
-    #     }
-    #
-    #     response = client.post('/api/auth/register', json=duplicate_user)
-    #
-    #     assert response.status_code == 400
+    def test_register_user(self, client):
+        """Test: Registrar un nuevo usuario"""
+        new_user = {
+            "nombre": "newuser",
+            "email": 'newuser@example.com',
+            "password_hash": "newpassword",
+            "telefono": "8296701244",
+            "rol": "admin",
+            "status": True
+        }
+
+        response = client.post('/api/v1/auth/register', json=new_user)
+
+        assert response.status_code == 201
+        data = response.get_json()
+        assert 'id_usuario' in data
+        assert data['nombre'] == 'newuser'
+
+    def test_register_duplicate_email(self, client, sample_user):
+        """Test: No se puede registrar email duplicado"""
+        duplicate_user = {
+            'nombre': 'testuser',
+            'email': 'test@example.com', # Ya existe
+            'password_hash': 'password123',
+            'telefono': '8296701244',
+            'rol': 'admin',
+            'status': True
+        }
+
+        response = client.post('/api/v1/auth/register', json=duplicate_user)
+
+        assert response.status_code == 409
 
     def test_login_success(self, client, sample_user):
         """Test: Login exitoso"""

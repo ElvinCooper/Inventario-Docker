@@ -168,6 +168,7 @@ def sample_product(db, sample_category):
     Nota que depende de sample_category (se ejecuta automáticamente).
     """
     product = Producto(
+        id_producto='12345',
         nombre_producto='Laptop',
         descripcion='High-performance laptop',
         imagen_url='https://example.com/laptop.jpg',

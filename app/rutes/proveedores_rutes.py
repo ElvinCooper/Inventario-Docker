@@ -71,6 +71,11 @@ class CreateProveedorResource(MethodView):
 
     def post(self, data_proveedor):
         """ Ingresar un nuevo proveedor en el sistema"""
+
+        email = Proveedor.query.filter_by(email=data_proveedor["email"]).first()
+        if email:
+            abort(HTTPStatus.CONFLICT, message=f"Ya existe un proveedor con este email {data_proveedor["email"]}")
+
         try:
 
             nuevo_proveedor = Proveedor(

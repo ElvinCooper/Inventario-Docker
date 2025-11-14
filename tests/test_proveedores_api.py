@@ -81,24 +81,24 @@ class TestProveedorEndpoints:
         data = response.get_json()
         assert data['nombre_proveedor'] == 'Office Supplies Co'
 
-    # def test_create_proveedor_duplicate_email(self, client, sample_proveedor, auth_headers):
-    #     """Test: No crear proveedor con email duplicado"""
-    #     duplicate_proveedor = {
-    #         'nombre_proveedor': 'Another Company',
-    #         'contact': '555-9999',
-    #         'direccion': '789 New St',
-    #         'email': 'contact@techsupplies.com',  # Email duplicado
-    #         'telefono': '8294685123',
-    #         'status': True
-    #     }
-    #
-    #     response = client.post(
-    #         '/api/v1/proveedor/create',
-    #         json=duplicate_proveedor,
-    #         headers=auth_headers
-    #     )
-    #
-    #     assert response.status_code == 400     # debo crear la validacion de no duplicacion de email de proveedor.
+    def test_create_proveedor_duplicate_email(self, client, sample_proveedor, auth_headers):
+        """Test: No crear proveedor con email duplicado"""
+        duplicate_proveedor = {
+            'nombre_proveedor': 'Another Company',
+            'contact': '555-9999',
+            'direccion': '789 New St',
+            'email': 'contact@techsupplies.com',  # Email duplicado
+            'telefono': '8294685123',
+            'status': True
+        }
+
+        response = client.post(
+            '/api/v1/proveedor/create',
+            json=duplicate_proveedor,
+            headers=auth_headers
+        )
+
+        assert response.status_code == 409
 
     def test_update_proveedor(self, client, sample_proveedor, auth_headers):
         """Test: Actualizar proveedor"""

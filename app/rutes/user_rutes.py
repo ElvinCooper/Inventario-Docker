@@ -107,9 +107,10 @@ def login_user(data_login):
             current_app.logger.warning(f"Intento de login con email inexistente: {data_login['email']}")
             return({"message":f"Credenciales Invalidas"}), HTTPStatus.UNAUTHORIZED
 
-        #if not check_password_hash(usuario.password_hash, data_login.get("password_hash")):
-        if usuario.password_hash != data_login['password_hash']:
-            return ({"message":"Credenciales Invalidas password"}), HTTPStatus.UNAUTHORIZED
+        if not check_password_hash(usuario.password_hash, data_login.get("password_hash")):
+        #if usuario.password_hash != data_login['password_hash']:
+            abort (HTTPStatus.UNAUTHORIZED, message=f"Credenciales Invalidas password")
+
 
         # Generar token de authentication
         additional_claims = {"rol": usuario.rol}
@@ -136,8 +137,6 @@ def login_user(data_login):
         current_app.logger.error(f"Error en login: {str(e)}")
         return {"success": False,
                 "message": f"Error interno: {str(e)}"}, HTTPStatus.INTERNAL_SERVER_ERROR
-
-
 
 
 

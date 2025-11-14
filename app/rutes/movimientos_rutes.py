@@ -6,7 +6,7 @@ from flask import request
 from ..extensions import db
 from http import HTTPStatus
 from marshmallow.exceptions import ValidationError
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask.views import MethodView
 from ..models import Producto, Movimientos, Usuario
 from ..schemas.error_schema import ErrorSchema
@@ -17,7 +17,53 @@ blp_movimientos = Blueprint('Movimientos', __name__, description='Operaciones co
 
 #----------- CRUD Movimientos -----------#
 
+@blp_movimientos.route("/movimiento/create")
+class CreateMovimientoResource(MethodView):
+    @blp_movimientos.arguments(MovimientoSchema)
+    @blp_movimientos.response(HTTPStatus.CREATED, MovimientoSchema)
+    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @jwt_required()
+    def post(self, data_movimiento):
+        """Registrar un nuevo movimiento en el sistema"""
 
+        # Obtener usuario del token
+        current_user_id = get_jwt_identity()
+
+        # Verificar que el producto existe
+        producto = Producto.query.get(data_movimiento["id_producto"])
+        if not producto:
+            abort(HTTPStatus.NOT_FOUND, message="Producto no encontrado")
+
+        nuevo_movimiento = Movimientos(
+            id_movimiento=str(uuid.uuid4()),
+            id_producto=data_movimiento["id_producto"],
+            id_usuario=current_user_id,
+            tipo_movimiento=data_movimiento["tipo_movimiento"],
+            cantidad=data_movimiento["cantidad"],
+            precio_unitario=data_movimiento["precio_unitario"],
+            motivo=data_movimiento["motivo"],
+            referencia=data_movimiento["referencia"],
+            fecha_movimiento=datetime.now(timezone.utc),
+            observaciones=data_movimiento.get("observaciones")
+        )
+
+        # Actualizar stock según tipo de movimiento
+        if nuevo_movimiento.tipo_movimiento.lower() == 'entrada':
+            producto.stock_actual += nuevo_movimiento.cantidad
+        elif nuevo_movimiento.tipo_movimiento.lower() == 'salida':
+            if producto.stock_actual < nuevo_movimiento.cantidad:
+                abort(HTTPStatus.BAD_REQUEST, message="Stock insuficiente")
+            producto.stock_actual -= nuevo_movimiento.cantidad
+
+        db.session.add(nuevo_movimiento)
+        db.session.commit()
+
+        return nuevo_movimiento, HTTPStatus.CREATED
+
+
+
+
+#--------------------------- Listar todos los movimientos del sistema --------------------------------#
 @blp_movimientos.route("/movimientos")
 class MovimientoResource(MethodView):
     @blp_movimientos.response(HTTPStatus.OK, PaginateMovimientoSchema)

@@ -29,8 +29,7 @@
             "description": "Errors",
             "additionalProperties": {}
           }
-        },
-        "additionalProperties": false
+        }
       },
       "PaginationMetadata": {
         "type": "object",
@@ -56,8 +55,45 @@
           "next_page": {
             "type": "integer"
           }
+        }
+      },
+      "UserRegister": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password_hash": {
+            "type": "string",
+            "writeOnly": true,
+            "minLength": 8,
+            "maxLength": 25
+          },
+          "telefono": {
+            "type": "string",
+            "maxLength": 15,
+            "nullable": true
+          },
+          "rol": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          }
         },
-        "additionalProperties": false
+        "required": [
+          "email",
+          "nombre",
+          "password_hash",
+          "rol",
+          "status"
+        ]
       },
       "Error1": {
         "type": "object",
@@ -72,8 +108,41 @@
         },
         "required": [
           "message"
-        ],
-        "additionalProperties": false
+        ]
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id_usuario": {
+            "type": "string"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "telefono": {
+            "type": "string",
+            "nullable": true
+          },
+          "rol": {
+            "type": "string"
+          },
+          "ultimo_acceso": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fecha_registro": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "boolean"
+          }
+        }
       },
       "UserSimple": {
         "type": "object",
@@ -106,8 +175,7 @@
           "movimientos": {
             "type": "string"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "Login": {
         "type": "object",
@@ -124,8 +192,7 @@
         "required": [
           "email",
           "password_hash"
-        ],
-        "additionalProperties": false
+        ]
       },
       "User": {
         "type": "object",
@@ -148,8 +215,7 @@
           "email",
           "nombre",
           "rol"
-        ],
-        "additionalProperties": false
+        ]
       },
       "LoginResponse": {
         "type": "object",
@@ -166,8 +232,7 @@
           "message": {
             "type": "string"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "LogoutResponse": {
         "type": "object",
@@ -175,8 +240,7 @@
           "mensaje": {
             "type": "string"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "TokenRefreshResponse": {
         "type": "object",
@@ -191,8 +255,7 @@
         "required": [
           "acces_token",
           "refresh_token"
-        ],
-        "additionalProperties": false
+        ]
       },
       "Producto": {
         "type": "object",
@@ -202,7 +265,9 @@
             "readOnly": true
           },
           "nombre_producto": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S+"
           },
           "descripcion": {
             "type": "string"
@@ -211,7 +276,8 @@
             "type": "string"
           },
           "precio": {
-            "type": "number"
+            "type": "number",
+            "minimum": "0.00"
           },
           "stock_minimo": {
             "type": "integer"
@@ -224,7 +290,7 @@
           },
           "imagen_url": {
             "type": "string",
-            "format": "uri",
+            "format": "url",
             "nullable": true
           },
           "fecha_creacion": {
@@ -250,8 +316,7 @@
           "status",
           "stock_actual",
           "stock_minimo"
-        ],
-        "additionalProperties": false
+        ]
       },
       "PaginateProducto": {
         "type": "object",
@@ -280,8 +345,7 @@
           "has_prev": {
             "type": "boolean"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "ProductoUpdate": {
         "type": "object",
@@ -293,21 +357,23 @@
             "type": "string"
           },
           "precio": {
-            "type": "string"
+            "type": "number",
+            "minimum": "0.00"
           },
           "stock_minimo": {
-            "type": "integer"
+            "type": "integer",
+            "minimum": 0
           },
           "stock_actual": {
-            "type": "integer"
+            "type": "integer",
+            "minimum": 0
           },
           "imagen_url": {
             "type": "string",
-            "format": "uri",
+            "format": "url",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
       "Categoria": {
         "type": "object",
@@ -335,8 +401,7 @@
           "descripcion_cat",
           "nombre_categoria",
           "status"
-        ],
-        "additionalProperties": false
+        ]
       },
       "PaginateCategoria": {
         "type": "object",
@@ -365,8 +430,7 @@
           "has_prev": {
             "type": "boolean"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "CategoriaUpdate": {
         "type": "object",
@@ -377,8 +441,7 @@
           "descripcion_cat": {
             "type": "string"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "Proveedor": {
         "type": "object",
@@ -418,8 +481,7 @@
           "nombre_proveedor",
           "status",
           "telefono"
-        ],
-        "additionalProperties": false
+        ]
       },
       "PaginateProveedor": {
         "type": "object",
@@ -448,8 +510,7 @@
           "has_prev": {
             "type": "boolean"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "ProveedorUpdate": {
         "type": "object",
@@ -472,8 +533,7 @@
           "status": {
             "type": "boolean"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "Movimiento": {
         "type": "object",
@@ -482,10 +542,7 @@
             "type": "string",
             "readOnly": true
           },
-          "id_productos": {
-            "type": "string"
-          },
-          "id_usuario": {
+          "id_producto": {
             "type": "string"
           },
           "tipo_movimiento": {
@@ -502,7 +559,6 @@
           },
           "referencia": {
             "type": "string",
-            "format": "uri",
             "nullable": true
           },
           "fecha_movimiento": {
@@ -517,13 +573,11 @@
         },
         "required": [
           "cantidad",
-          "id_productos",
-          "id_usuario",
+          "id_producto",
           "motivo",
           "precio_unitario",
           "tipo_movimiento"
-        ],
-        "additionalProperties": false
+        ]
       },
       "PaginateMovimiento": {
         "type": "object",
@@ -552,13 +606,12 @@
           "has_prev": {
             "type": "boolean"
           }
-        },
-        "additionalProperties": false
+        }
       }
     },
     "responses": {
-      "DEFAULT_ERROR": {
-        "description": "Default error response",
+      "UNPROCESSABLE_ENTITY": {
+        "description": "Unprocessable Entity",
         "content": {
           "application/json": {
             "schema": {
@@ -567,8 +620,8 @@
           }
         }
       },
-      "UNPROCESSABLE_ENTITY": {
-        "description": "Unprocessable Entity",
+      "DEFAULT_ERROR": {
+        "description": "Default error response",
         "content": {
           "application/json": {
             "schema": {
@@ -585,6 +638,70 @@
     }
   ],
   "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Error interno del servidor"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Ya existe un usuario con ese email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Ya existe un usuario con ese email"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegister"
+              }
+            }
+          }
+        },
+        "summary": "Registrar un nuevo usuario",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
     "/api/v1/usuarios": {
       "get": {
         "responses": {
@@ -1465,6 +1582,56 @@
         }
       ]
     },
+    "/api/v1/movimiento/create": {
+      "post": {
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error1"
+                },
+                "example": {
+                  "succes": false,
+                  "message": "Error interno del servidor"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Movimiento"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Movimiento"
+              }
+            }
+          }
+        },
+        "summary": "Registrar un nuevo movimiento en el sistema",
+        "tags": [
+          "Movimientos"
+        ]
+      }
+    },
     "/api/v1/movimientos": {
       "get": {
         "responses": {
@@ -1619,3 +1786,5 @@
   ],
   "openapi": "3.0.3"
 }
+
+

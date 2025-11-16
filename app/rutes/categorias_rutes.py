@@ -22,6 +22,8 @@ blp_categorias = Blueprint('Categorias', __name__, description='Operaciones con 
 @blp_categorias.route("/categorias")
 class CategoriasResource(MethodView):
     @blp_categorias.response(HTTPStatus.OK, PaginateCategoriaSchema)
+    @blp_categorias.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_categorias.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, page =1, per_page=10):
         """ Consultar todas las categorias """
@@ -48,6 +50,9 @@ class CategoriasResource(MethodView):
 @blp_categorias.route("/categoria/<string:id_categoria>")
 class CategoriaIdResource(MethodView):
     @blp_categorias.response(HTTPStatus.OK, CategoriaSchema)
+    @blp_categorias.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="No existe una categoria con el Id proveeido", example={"succes": False, "message": "No encontrado"})
+    @blp_categorias.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_categorias.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, id_categoria):
         """ Consultar las categoria por su ID"""
@@ -64,9 +69,10 @@ class CategoriaIdResource(MethodView):
 class CreateCategoriaResource(MethodView):
     @blp_categorias.arguments(CategoriaSchema)
     @blp_categorias.response(HTTPStatus.CREATED, CategoriaSchema)
+    @blp_categorias.alt_response(HTTPStatus.CONFLICT, schema=ErrorSchema, description="La categoria ya existe", example={"succes": False, "message": "Conflicto"})
+    @blp_categorias.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
     @blp_categorias.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
-
     def post(self, data_categoria):
         """ Ingresar una nueva categoria en el sistema"""
 
@@ -106,6 +112,8 @@ class CategoriaUpdateResource(MethodView):
     @blp_categorias.arguments(CategoriaUpdateSchema)
     @blp_categorias.response(HTTPStatus.OK, CategoriaSchema)
     @blp_categorias.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Categoria no encontrada", example={"success": False, "message": "No existe una categoria con este Id"})
+    @blp_categorias.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_categorias.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def put(self, update_data, id_categoria ):
         """ Actualizar una categoria por su ID """
@@ -136,10 +144,15 @@ class CategoriaUpdateResource(MethodView):
 @blp_categorias.route("/categoria/delete/<string:id_categoria>")
 class CategoriaDeleteResource(MethodView):
     @blp_categorias.response(HTTPStatus.NO_CONTENT)
+    @blp_categorias.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Categoria no encontrada", example={"success": False, "message": "No existe una categoria con este Id"})
+    @blp_categorias.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_categorias.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def delete(self, id_categoria):
         """ Eliminar una categoria por su ID """
-        categoria = Categoria.query.get_or_404(id_categoria, description="Categoria no encontrada")
+        categoria = db.session.get(Categoria, id_categoria)
+        if not categoria:
+            abort(HTTPStatus.NOT_FOUND, message="No existe una categoria con el Id proveeido")
 
         db.session.delete(categoria)
         db.session.commit()

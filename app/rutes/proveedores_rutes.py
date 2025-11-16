@@ -21,6 +21,8 @@ blp_proveedores = Blueprint('Proveedores', __name__, description='Operaciones co
 @blp_proveedores.route('/proveedores')
 class ProveedoresResource(MethodView):
     @blp_proveedores.response(HTTPStatus.OK, PaginateProveedorSchema)
+    @blp_proveedores.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_proveedores.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self):
         """ Consultar todos los proveedores """
@@ -51,11 +53,16 @@ class ProveedoresResource(MethodView):
 @blp_proveedores.route('/proveedores/<id_proveedor>')
 class ProveedoresIdResource(MethodView):
     @blp_proveedores.response(HTTPStatus.OK, ProveedorSchema)
+    @blp_proveedores.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrado", example={"success": False, "message": "Proveedor no encontrado"})
+    @blp_proveedores.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_proveedores.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, id_proveedor):
         """ Consultar los proveedores por su id """
+        proveedor = Proveedor.query.filter_by(id_proveedor=id_proveedor).first()
+        if not proveedor:
+            abort(HTTPStatus.NOT_FOUND, message="Proveedor no encontrado")
 
-        proveedor = Proveedor.query.get_or_404(id_proveedor, description="Proveedor no existe")
 
         return proveedor
 
@@ -66,9 +73,10 @@ class ProveedoresIdResource(MethodView):
 class CreateProveedorResource(MethodView):
     @blp_proveedores.arguments(ProveedorSchema)
     @blp_proveedores.response(HTTPStatus.CREATED, ProveedorSchema)
+    @blp_proveedores.alt_response(HTTPStatus.CONFLICT, schema=ErrorSchema, description="Solicitud inválida", example={"success": False, "message": "Ya existe un proveedor con este email"})
+    @blp_proveedores.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
     @blp_proveedores.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
-
     def post(self, data_proveedor):
         """ Ingresar un nuevo proveedor en el sistema"""
 
@@ -111,7 +119,9 @@ class CreateProveedorResource(MethodView):
 class ProveedorUpdateResource(MethodView):
     @blp_proveedores.arguments(ProveedorUpdateSchema)
     @blp_proveedores.response(HTTPStatus.OK, ProveedorSchema)
-    @blp_proveedores.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Proveedor no encontrado", example={"success": False, "message": "No existe un proveedor con este Id"})
+    @blp_proveedores.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Proveedor no encontrado", example={"success": False, "message": "No existe un proveedor con el Id proveeido"})
+    @blp_proveedores.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_proveedores.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def put(self, update_data, id_proveedor ):
         """ Actualizar un proveedor por su ID """
@@ -150,10 +160,15 @@ class ProveedorUpdateResource(MethodView):
 @blp_proveedores.route("/proveedor/delete/<string:id_proveedor>")
 class ProveedorDeleteResource(MethodView):
     @blp_proveedores.response(HTTPStatus.NO_CONTENT)
+    @blp_proveedores.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Proveedor no encontrado", example={"success": False, "message": "No existe un proveedor con el Id proveeido"})
+    @blp_proveedores.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_proveedores.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def delete(self, id_proveedor):
         """ Eliminar un proveedor por su ID """
-        proveedor = Proveedor.query.get_or_404(id_proveedor, description="Proveedor no encontrado")
+        proveedor = Proveedor.query.filter_by(id_proveedor=id_proveedor).first()
+        if not proveedor:
+            abort(HTTPStatus.NOT_FOUND, message="No existe un proveedor con el Id proveeido")
 
         db.session.delete(proveedor)
         db.session.commit()

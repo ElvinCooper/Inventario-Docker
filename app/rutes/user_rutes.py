@@ -85,9 +85,7 @@ class UserIdResource(MethodView):
         """ Consultar un usuario por su Id"""
         usuario = Usuario.query.filter_by(id_usuario=id_usuario).first()
         if not usuario:
-            #abort(HTTPStatus.NOT_FOUND, errors={"message": "Usuario no encontrado"})
-            return jsonify({"succes": False,
-                            "message": "No existe ningun usuario con este Id"}), HTTPStatus.NOT_FOUND
+           abort(HTTPStatus.NOT_FOUND, message="Usuario no encontrado")
 
         return usuario
 
@@ -146,6 +144,8 @@ def login_user(data_login):
 class LogoutResource(MethodView):
     @jwt_required()
     @usuario_bp.response(HTTPStatus.OK, LogoutResponseSchema)
+    @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error al generar token", example={"success": False, "message": "Error interno del servidor"})
     def post(self):
         """ Logout usuarios  """
         jti =get_jwt()['jti']
@@ -160,6 +160,9 @@ class LogoutResource(MethodView):
 class RefreshToken(MethodView):
     @jwt_required()
     @usuario_bp.response(HTTPStatus.OK, TokenRefreshResponseSchema)
+    @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error al generar token", example={"success": False, "message": "Error interno del servidor"})
+    @jwt_required()
     def post(self):
         """ Renovar los tokens """
         jwt_payload = get_jwt()

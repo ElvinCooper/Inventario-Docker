@@ -63,7 +63,7 @@ def app():
     # Configuración específica para testing
     app.config.update({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'postgresql://test_user:test_password@test-db:5432/test_inventory',
+        'SQLALCHEMY_DATABASE_URI': 'postgresql://test_user:test_password@localhost:5432/test_inventory',
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
         'JWT_SECRET_KEY': 'test-secret-key-do-not-use-in-production',
         'WTF_CSRF_ENABLED': False,

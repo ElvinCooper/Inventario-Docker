@@ -1,94 +1,103 @@
-name: Prueba y Despliegue
+name: CI Pipeline
 
 on:
   push:
-    branches:
-      - main
-
-permissions:
-  contents: read
-
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  test-deploy:
+  test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:15
         env:
-          POSTGRES__USER: POST
-          POSTGRES_PASSWORD: PSOT
-          POSTGRES_DB: DB
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+          POSTGRES_DB: test_db
         ports:
           - 5432:5432
-
-    env:
-      POSTGRES__USER: POST
-      POSTGRES_PASSWORD: PSOT
-      POSTGRES_DB: DB
-      SQLALCHEMY_DATABASE_URI: prueba
-
-
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
-      - name: Set Up Python
-        uses: : actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
-          cache: 'pip'
+          python-version: '3.12'
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Esperar a Postgres
+      - name: Run tests
+        env:
+          SQLALCHEMY_DATABASE_URI: postgresql://test_user:test_pass@localhost:5432/test_db
+          JWT_SECRET_KEY: test-secret-key
+          SECRET_KEY: test-secret
+          FLASK_ENV: testing
         run: |
-          echo "Esperando a que PostgreSQL este listo..."
-                    # Intenta conectarse al puerto 5432 del servicio 'postgres'
+          pytest --maxfail=1 -v --cov=app --cov-report=html --cov-report=term
 
-
-                    for i in $(seq 1 30); do
-                      nc -vz localhost 5432 && break # <--- CAMBIADO 'postgres' a 'localhost'
-                      echo "PostgreSQL is still unavailable - sleeping for 1 second..."
-                      sleep 1
-                    done
-
-                    # Verificar si la conexión fue exitosa después de los intentos
-                    if ! nc -vz localhost 5432; then # <--- CAMBIADO 'postgres' a 'localhost'
-                      echo "PostgreSQL no estuvo listo a tiempo. Exiting."
-                      exit 1
-                    fi
-                    echo "PostgreSQL is up and running!"
-
-      - name: Correr migraciones
-        run: flask db upgrade
-
-      - name: Cacheo de dependencias para Node
-        uses: : actions/cache@v4
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-       
+          name: coverage-report
+          path: htmlcov/
 
-      - name: Install StepCI globally
-        run: npm install -g stepci@2.8.2
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME_API }}
+          password: ${{ secrets.DOCKER_PASSWORD_API }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME_API }}/inventario-api:latest
+            ${{ secrets.DOCKER_USERNAME_API }}/inventario-api:${{ github.sha }}
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME_API }}/inventario-api:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME_API }}/inventario-api:buildcache,mode=max
 
 
-      - name: Run Flask manually in background with log
-        run: |
-          python app.py > flask.log 2>&1 &
-          sleep 5
+      - name: Send Gmail Notification - Success
+          if: success() && github.ref == 'refs/heads/main'
+          uses: dawidd6/action-send-mail@v3
+          with:
+            server_address: smtp.gmail.com
+            server_port: 465
+            secure: true
+            username: ${{ secrets.GMAIL_USERNAME }}
+            password: ${{ secrets.GMAIL_APP_PASSWORD }}
+            subject: ' [CI] Intregracion exitosa en main'
+            to: ${{ secrets.GMAIL_USERNAME }}
+            from: ${{ secrets.GMAIL_USERNAME }}
+            body: |
+              Hola Elvin,
               
-
-      - name: Esperar a que inicie el servidor de flask
-        run: |
-          echo "Esperando que Flask arranque..."
-          for i in {1..10}; do
-            curl -s http://localhost:5000/ && break || sleep 1
-          done                  
+                ✅ Los tests pasaron!.
+              
+              Revisa GitHub Actions para más detalles:
+              ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

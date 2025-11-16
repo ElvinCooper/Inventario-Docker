@@ -83,9 +83,9 @@ jobs:
 
 
       - name: Send Gmail Notification - Success
-          if: success() && github.ref == 'refs/heads/main'
-          uses: dawidd6/action-send-mail@v3
-          with:
+        if: success() && github.ref == 'refs/heads/main'
+        uses: dawidd6/action-send-mail@v3
+        with:
             server_address: smtp.gmail.com
             server_port: 465
             secure: true

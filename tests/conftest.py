@@ -18,38 +18,6 @@ from app.models import Usuario, Producto, Categoria, Proveedor, Movimientos
 from werkzeug.security import generate_password_hash
 
 
-# ============================================
-# FIXTURES DE INFRAESTRUCTURA
-# ============================================
-
-# @pytest.fixture(scope='session', autouse=True)
-# def docker_db():
-#     """
-#     Inicia el contenedor de PostgreSQL antes de todos los tests
-#     y lo detiene después de todos los tests.
-#
-#     scope='session': Se ejecuta UNA vez para toda la sesión de tests
-#     autouse=True: Se ejecuta automáticamente sin necesidad de declararlo
-#     """
-#     print("\n Iniciando contenedor de PostgreSQL...")
-#     subprocess.run(
-#         ['docker-compose', '-f', 'docker-compose.test.yaml', 'up', '-d'],
-#         check=True
-#     )
-#
-#     # Esperar a que PostgreSQL esté listo
-#     print(" Esperando a que PostgreSQL esté listo...")
-#     time.sleep(5)
-#
-#     yield  # Aquí se ejecutan todos los tests
-#
-#     print("\n Deteniendo contenedor de PostgreSQL...")
-#     subprocess.run(
-#         ['docker-compose', '-f', 'docker-compose.test.yaml', 'down', '-v'],
-#         check=True
-#     )
-
-
 @pytest.fixture(scope='session')
 def app():
     """
@@ -60,10 +28,15 @@ def app():
     os.environ["FLASK_ENV"] = "testing"
     app = create_app("testing")
 
-    # Configuración específica para testing
+    # Usar variable de entorno del workflow o valor por defecto para Docker local
+    test_db_uri = os.getenv(
+        'SQLALCHEMY_DATABASE_URI',
+        'postgresql://test_user:test_password@test-db:5432/test_inventory'  # Local Docker
+    )
+
     app.config.update({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'postgresql://test_user:test_password@localhost:5432/test_inventory',
+        'SQLALCHEMY_DATABASE_URI': test_db_uri,  # ← Usar variable
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
         'JWT_SECRET_KEY': 'test-secret-key-do-not-use-in-production',
         'WTF_CSRF_ENABLED': False,

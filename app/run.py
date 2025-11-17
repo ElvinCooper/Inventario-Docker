@@ -1,11 +1,9 @@
 import os
-#from base64 import urlsafe_b64decode
 from flask import Flask
 from .extensions import init_extensions, db
 from dotenv import load_dotenv
-from .models import Producto, Categoria
 from flask import jsonify
-
+from flask_migrate import Migrate, upgrade as migrate_upgrade
 from werkzeug.exceptions import HTTPException
 from .config import DevelopmentConfig, ProductionConfig, TestingConfig
 from flask_smorest import Api
@@ -41,6 +39,16 @@ def create_app(env=None):
     from .rutes.proveedores_rutes import blp_proveedores
 
     api = Api(app)
+
+    # EJECUTAR MIGRACIONES AL INICIAR (solo en producción)
+    if env == "production":
+        with app.app_context():
+            try:
+                print("Ejecutando migraciones automáticas...")
+                migrate_upgrade()
+                print("Migraciones completadas!")
+            except Exception as e:
+                print(f"Error en las migraciones: {e}")
 
     if not app.config.get('SQLALCHEMY_DATABASE_URI'):
         raise ValueError(f"SQLALCHEMY_DATABASE_URI no está configurado para el entorno: {env}")

@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('categorias',
     sa.Column('id_categoria', sa.String(length=36), nullable=False),
     sa.Column('nombre_categoria', sa.String(length=100), nullable=False),
-    sa.Column('Descripcion_cat', sa.String(length=150), nullable=False),
+    sa.Column('descripcion_cat', sa.String(length=150), nullable=False),
     sa.Column('fecha_creacion', sa.DateTime(), nullable=True),
     sa.Column('status', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id_categoria')

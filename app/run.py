@@ -7,7 +7,7 @@ from flask_migrate import Migrate, upgrade as migrate_upgrade
 from werkzeug.exceptions import HTTPException
 from .config import DevelopmentConfig, ProductionConfig, TestingConfig
 from flask_smorest import Api
-from limiter import limiter
+from .limiter import limiter
 
 
 

@@ -49,3 +49,5 @@ class TestingConfig(BaseConfig):
     )
 
     TESTING = True
+    DEBUG = True
+    RATELIMIT_ENABLED = False

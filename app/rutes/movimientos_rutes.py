@@ -11,6 +11,7 @@ from flask.views import MethodView
 from ..models import Producto, Movimientos, Usuario
 from ..schemas.error_schema import ErrorSchema
 from ..schemas.movimientos_schema import PaginateMovimientoSchema, MovimientoSchema
+from ..limiter import limiter
 
 
 blp_movimientos = Blueprint('Movimientos', __name__, description='Operaciones con movimientos')
@@ -19,6 +20,7 @@ blp_movimientos = Blueprint('Movimientos', __name__, description='Operaciones co
 
 @blp_movimientos.route("/movimiento/create")
 class CreateMovimientoResource(MethodView):
+    @limiter.limit("20 per minute")
     @blp_movimientos.arguments(MovimientoSchema)
     @blp_movimientos.response(HTTPStatus.CREATED, MovimientoSchema)
     @blp_movimientos.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrado", example={"success": False, "message": "Producto no encontrado"})

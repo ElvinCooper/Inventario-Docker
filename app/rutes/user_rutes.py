@@ -1,7 +1,6 @@
 import datetime
 import uuid
 from datetime import timezone, datetime
-from urllib import request
 from flask_smorest import Blueprint, abort
 from ..extensions import db
 from http import HTTPStatus
@@ -15,6 +14,7 @@ from flask import jsonify, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.exceptions import HTTPException
 import traceback
+from ..limiter import limiter
 
 
 usuario_bp = Blueprint('Usuarios', __name__, description='Operaciones con usuarios')
@@ -24,7 +24,7 @@ usuario_bp = Blueprint('Usuarios', __name__, description='Operaciones con usuari
 
 @usuario_bp.route('/auth/register')
 class UsuarioRegister(MethodView):
-    #@limiter.limit("5 per minute")  # intentos por minuto
+    @limiter.limit("5 per minute")  # intentos por minuto
     @usuario_bp.arguments(UserRegisterSchema)
     @usuario_bp.response(HTTPStatus.CREATED, UserResponseSchema)
     @usuario_bp.alt_response(HTTPStatus.CONFLICT, schema=ErrorSchema, description="Ya existe un usuario con ese email", example={"success": False, "message": "Ya existe un usuario con ese email"})
@@ -92,6 +92,7 @@ class UserIdResource(MethodView):
 
 #--------- Endpoint para hacer login de un usuario del sistema ---------#
 @usuario_bp.route('/auth/login', methods=['POST'])
+@limiter.limit("5 per minute")
 @usuario_bp.arguments(LoginSchema)
 @usuario_bp.response(HTTPStatus.OK, LoginResponseSchema)
 @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})

@@ -51,9 +51,9 @@ jobs:
         run: |
           curl http://localhost:8000/openapi.json -o openapi.json
 
-      - name: Deploy to SwaggerHub
-        uses: smartbear/swaggerhub-cli@v0.9.0
-        env:
-          SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
-        with:
-          args: api:update INGELVIN01COOPER/inventario-api/v1.0.0 -f openapi.json --visibility public --published=publish --force
+#      - name: Deploy to SwaggerHub
+#        uses: smartbear/swaggerhub-cli@v0.9.0
+#        env:
+#          SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
+#        with:
+#          args: api:update INGELVIN01COOPER/inventario-api/v1.0.0 -f openapi.json --visibility public --published=publish --force

@@ -1,8 +1,11 @@
 """
 Tests para autenticación y autorización.
 """
+from http import HTTPStatus
 import pytest
 from werkzeug.security import check_password_hash
+import time
+from app.limiter import limiter
 
 pytestmark = pytest.mark.integration
 
@@ -135,3 +138,29 @@ class TestAuthorization:
         )
 
         assert response.status_code in [401, 422]
+
+
+# class TestRateLimiting:
+#     """ Tests para verificar rate limiting """
+#
+#     def test_login_rate_limit_exceeded(self, client):
+#         """ Test bloquear despues de 5 intentos de login"""
+#         limiter.reset()
+#
+#         credentials = {'email': 'test@example.com',
+#                        'password_hash': 'wrongpassword'
+#                        }
+#
+#         # Hacer 5 intentos (limit)
+#         for i in range(5):
+#             response = client.post('/api/v1/auth/login', json=credentials)
+#             print(f"Intento {i + 1}: {response.status_code}")  # Debug
+#             assert response.status_code in [401, 200]
+#
+#         # 6to. intento debe bloquear
+#         response = client.post('/api/v1/auth/login', json=credentials)
+#         assert response.status_code == HTTPStatus.TOO_MANY_REQUESTS
+#
+#         data = response.get_json()
+#         assert 'rate_limit' in str(data).lower() or 'too many' in str(data).lower()
+

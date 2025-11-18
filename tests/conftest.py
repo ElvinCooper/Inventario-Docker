@@ -40,6 +40,7 @@ def app():
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
         'JWT_SECRET_KEY': 'test-secret-key-do-not-use-in-production',
         'WTF_CSRF_ENABLED': False,
+        'RATELIMIT_ENABLED': False
     })
 
     # Crear todas las tablas

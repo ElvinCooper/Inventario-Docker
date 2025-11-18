@@ -56,4 +56,4 @@ jobs:
         env:
           SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
         with:
-          args: api:create INGELVIN01COOPER/inventario-api -f openapi.json --visibility public --published=publish
+          args: api:update INGELVIN01COOPER/inventario-api/v1.0.0 -f openapi.json --visibility public --published=publish

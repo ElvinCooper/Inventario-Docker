@@ -1,169 +1,227 @@
-# <span style="color:green"> Inventario-Dockerizado </span>
-### <span style="color:green"> Python Version 3.11 </span>
-#### <span style="color:green"> Descripción: </span>
+# Inventario-Dockerizado
 
-Inventario-Docker es una API RESTful completa para la gestión de inventarios, diseñada con un enfoque en la escalabilidad y la facilidad de despliegue. Esta aplicación permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos, categorías y existencias en un sistema de inventario.
-Utilizando un stack moderno y ligero, la API está construida con Python y Flask como framework web, SQLAlchemy para el manejo de ORM y base de datos relacional con PostgreSQL. Incluye documentación interactiva mediante OpenAPI (Swagger) para facilitar el testing y el uso, y pruebas unitarias con Pytest para garantizar la calidad del código. Todo el proyecto está dockerizado, lo que permite un despliegue rápido y consistente en cualquier entorno.
+**Python 3.12+**
 
-### <span style="color:green"> Características Principales: </span>
+## Descripción
 
-**Gestión de Productos:** Agregar, editar, eliminar y buscar productos con detalles como nombre, descripción, precio y stock.
+Inventario-Docker es una API RESTful para la gestión de inventarios, construida con Python y Flask. Permite gestionar productos y categorías, cuenta con autenticación básica (JWT), documentación OpenAPI (Swagger) y está preparada para desplegarse con Docker y Docker Compose.
 
-**Categorías:** Organización de productos en categorías para una mejor clasificación.
+## Características principales
 
-**Autenticación y Autorización:** Soporte básico para JWT (puedes extenderlo según necesidades).
+- Gestión de productos: crear, editar, eliminar y listar productos (nombre, descripción, precio, stock, categoría).
+- Gestión de categorías.
+- Autenticación con JWT (mecanismo básico).
+- Documentación automática (OpenAPI / Swagger).
+- Pruebas automatizadas con pytest.
+- Despliegue con Docker y Docker Compose.
+- Base de datos PostgreSQL con migraciones (Alembic/Flask-Migrate).
 
-**Documentación Automática:** Swagger UI integrado para explorar y probar endpoints en tiempo real.
+## Tecnologías
 
-**Pruebas Automatizadas:** Cobertura de tests con Pytest para endpoints y lógica de negocio.
+- Python 3.12+
+- Flask
+- SQLAlchemy
+- PostgreSQL
+- OpenAPI / Swagger
+- Alembic (migraciones)
+- Gunicorn (servidor en producción)
+- Docker, Docker Compose
+- Pytest
 
-**Despliegue Fácil:** Configuración con Docker y Docker Compose para desarrollo y producción.
+---
 
-**Base de Datos Robusta:** PostgreSQL con migraciones gestionadas por Alembic (opcional, integrable).
-
-Ideal para startups, e-commerce o cualquier sistema que requiera control de stock eficiente.
-Tecnologías Utilizadas
-
- - Backend: Python 3.9+, Flask, SQLAlchemy 
- - Base de Datos: PostgreSQL
- - Documentación API: Flask-RESTX / OpenAPI (Swagger)
- - Testing: Pytest, Pytest-Cov
- - Contenerización: Docker, Docker Compose
- - Otras: Alembic (para migraciones), Gunicorn (para producción)
-
-### <span style="color:green"> Requisitos Previos: </span>
+## Requisitos previos
 
 - Docker y Docker Compose instalados.
-- Python 3.9+ (para desarrollo local sin Docker).
-- it para clonar el repositorio.
+- (Opcional) Python 3.12+ para desarrollo local sin Docker.
 
-**Instalación:**
+---
 
-**Opción 1:** Despliegue con Docker (Recomendado)
+## Quickstart — Despliegue con Docker (recomendado)
 
-- Clona el repositorio:textgit clone https://github.com/ElvinCooper/Inventario-Docker.git
-- cd Inventario-Docker
-- Inicia los servicios (API + PostgreSQL):textdocker-compose up -d --build 
-- Esto levantará: La API en http://localhost:5000
-- La base de datos PostgreSQL en localhost:5432 (con variables de entorno por defecto).
+1. Clona el repositorio:
+```bash
+git clone https://github.com/ElvinCooper/Inventario-Docker.git
+cd Inventario-Docker
+```
 
-**Verifica el despliegue:**
+2. Crea un archivo .env en la raíz (puedes basarte en .env.example):
 
-- Accede a Swagger en http://localhost:5000/swagger para probar endpoints.
-- Revisa los logs con docker-compose logs -f.
+3. Levanta los servicios (app + db):
+```bash
+docker-compose up -d --build
+```
 
+4. Comprobar:
+- API: http://localhost:8000
+- Swagger / documentación interactiva: http://localhost:8000/apidocs 
+- Base de datos (mappeada al host): localhost:5433 → contenedor:5432
 
-**Opción 2:** Desarrollo Local (Sin Docker)
+Ver logs:
+```bash
+docker-compose logs -f
+```
 
-- Clona el repositorio como arriba.
-- Crea un entorno virtual:textpython -m venv venv
-- source venv/bin/activate  # En Windows: venv\Scripts\activate
-- Instala dependencias:textpip install -r requirements.txt
-- Configura la base de datos:
-- Instala y levanta PostgreSQL localmente.
-- Crea una base de datos llamada inventario_db.
-- Actualiza las variables en .env (o config.py).
+---
 
-**Ejecuta migraciones (si usas Alembic):** textalembic upgrade head
-**Inicia la aplicación:textflask run --debugO con Gunicorn para producción:** gunicorn -w 4 -b 0.0.0.0:5000 app:app.
+## Desarrollo local (sin Docker)
 
-Uso
-### <span style="color:green"> Endpoints Principales: </span>
+1. Clona el repositorio:
+```bash
+git clone https://github.com/ElvinCooper/Inventario-Docker.git
+cd Inventario-Docker
+```
 
-La documentación interactiva está disponible en http://localhost:8000/apidocs. Aquí una tabla con los endpoints principales:
+2. Crea y activa un entorno virtual:
+```bash
+python -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+```
 
-| Método | Endpoint                           | Descripción                          | Autenticación |
-|--------|------------------------------------|--------------------------------------|---------------|
-| POST   | `/api/v1/productos/create`         | Crear un nuevo producto             | Opcional     |
-| GET    | `/api/v1/productos`                | Listar todos los productos          | No           |
-| GET    | `/api/v1/productos/<id_producto>`  | Obtener detalles de un producto     | No           |
-| PUT    | `/api/v1/productos/<id_producto>`  | Actualizar un producto              | Requerida    |
-| DELETE | `/api/v1/productos/<id_producto>`  | Eliminar un producto                | Requerida    |
-| POST   | `/api/v1/categoria/create`         | Crear una nueva categoría           | Opcional     |
-| GET    | `/api/v1/categorias`               | Listar todas las categorías         | No           |
-| GET    | `/api/v1/categoria/<id_categoria>` | Obtener una categoría por ID        | No           |
-| PUT    | `/api/v1/categoria/<id_categoria>` | Actualizar una categoría            | Requerida    |
-| DELETE | `/api/v1/categoria/<id_categoria>` | Eliminar una categoría              | Requerida    |
+3. Instala dependencias:
+```bash
+pip install -r requirements.txt
+```
 
+4. Configura la base de datos local (PostgreSQL) y crea la base `inventario_db`. Ajusta variables en `.env` o `config.py`.
 
+5. Ejecuta migraciones (local):
+```bash
+alembic upgrade head
+# o si usas Flask-Migrate
+flask db upgrade
+```
 
+6. Ejecuta la aplicación en desarrollo:
+```bash
+export FLASK_APP=app.run
+export FLASK_ENV=development
+flask run --port 8000
+# o para producción local con Gunicorn
+gunicorn -w 4 -b 0.0.0.0:8000 app.run:app
+```
 
-**Ejemplo de request (POST /api/products):**
+---
 
-```python 
-json{
+## Variables de entorno
+
+Crea un archivo `.env` en la raíz (no subir a repositorios públicos con credenciales reales). Un ejemplo básico está en `.env.example`. Variables relevantes (ejemplos):
+
+- POSTGRES_USER
+- POSTGRES_PASSWORD
+- POSTGRES_DB
+- POSTGRES_PORT
+- DATABASE_URL (ejemplos abajo)
+- SECRET_KEY
+- FLASK_ENV
+
+Ejemplos de DATABASE_URL:
+- Para ejecución en Docker Compose (desde el contenedor `web`):  
+  postgresql://postgres:postgres@db:5432/inventario_db
+- Para conexión desde tu host (cuando docker-compose mapea el puerto):  
+  postgresql://postgres:postgres@localhost:5433/inventario_db
+
+---
+
+## Migraciones y comandos en contenedor
+
+Si prefieres ejecutar migraciones desde el contenedor (con Docker Compose):
+```bash
+# Ejecutar alembic dentro del servicio 'web'
+docker-compose exec web alembic upgrade head
+# o con Flask-Migrate
+docker-compose exec web flask db upgrade
+```
+
+Para ejecutar tests dentro del contenedor:
+```bash
+docker-compose exec web pytest --cov=app --cov-report=html
+```
+
+Si existe un archivo `docker-compose.test.yaml`, puedes usarlo con:
+```bash
+docker-compose -f docker-compose.test.yaml up --build
+```
+
+---
+
+## Pruebas
+
+Ejecutar pruebas localmente:
+```bash
+pytest --cov=app --cov-report=html
+```
+El reporte de cobertura se genera en `htmlcov/`.
+
+---
+
+## Endpoints (resumen)
+
+La documentación interactiva (Swagger) es la fuente canónica. A modo de resumen, algunos endpoints principales:
+
+- POST /api/v1/productos/create — Crear producto (requiere auth según configuración)
+- GET /api/v1/productos — Listar productos
+- GET /api/v1/productos/{id_producto} — Detalles de producto
+- PUT /api/v1/productos/{id_producto} — Actualizar producto
+- DELETE /api/v1/productos/{id_producto} — Eliminar producto
+- POST /api/v1/categoria/create — Crear categoría
+- GET /api/v1/categorias — Listar categorías
+- etc.
+
+Ejemplo de payload (JSON) para crear producto:
+```json
+{
   "name": "Laptop Dell",
-  "description": "Laptop de 16GB RAM",
+  "description": "Laptop con 16GB RAM",
   "price": 1200.00,
   "stock": 10,
   "category_id": 1
 }
 ```
 
-### Variables de Entorno
-**Crea un archivo .env en la raíz:**
-```text
- DATABASE_URL=postgresql://user:password@localhost:5432/inventario_db
+Sugerencia: para ejemplos de uso, usa curl o Postman con el endpoint `/api/v1/productos/create` y el header `Content-Type: application/json`.
 
-SECRET_KEY=tu_clave_secreta_aqui
-FLASK_ENV=development
+---
+
+## Estructura del proyecto (resumen)
+```
+Inventario-Docker/
+├── app/                # Código fuente: routes, models, config, extensions
+├── migrations/         # Migraciones Alembic / Flask-Migrate
+├── tests/              # Pruebas con pytest
+├── Dockerfile
+├── docker-compose.yaml
+├── docker-compose.test.yaml
+├── requirements.txt
+├── requirements-dev.txt
+├── setup.py
+├── openapi.json
+└── README.md
 ```
 
-### Pruebas
-**Ejecuta las pruebas unitarias:**
-```text 
-pytest --cov=app --cov-report=html
-```
-Esto genera un reporte de cobertura en htmlcov/. Las pruebas cubren endpoints, modelos de DB y lógica de validación.
+---
 
-Inventario \
-├── .github \
-├── app  
-│   ├── routes  \        # Definición de endpoints 
-│   ├── schemas \        # Esquemas Marshmallow / Pydantic (opcional) 
-│   ├── __init__.py  \   # Inicialización de Flask 
-│   ├── extensions.py \  # Inicialización de Flask 
-│   ├── models.py      \ # Modelos SQLAlchemy (Product, Category, etc.) 
-│   ├── run.py         \ # Inicialización de Flask 
-│   ├── wsgi.py        \ # Inicialización de Flask  
-│   ├── config.py      \ # Configuraciones de la app 
-│   └── run.py \
-├── htmlcov \
-│    ├── index.html \
-│    ├── ect... \
+## Contribución
 
-├── tests \
-│   ├── __init__.py \
-│   ├── test_products.py  # Pruebas para productos \
-│   ├── test_categories.py # Pruebas para categorías \
-│   └── conftest.py       # Fixtures compartidas (pytest) \
-├── migrations/           # Migraciones con Alembic \
-├── Dockerfile            # Imagen Docker de la API \
-├── docker-compose.yml    # Servicios: app + db \
-├── requirements.txt      # Dependencias Python \
-├── .env.example          # Plantilla de variables de entorno \
-├── .gitignore \
-└── README.md             # Este archivo \
+Contribuciones bienvenidas. Flujo recomendado:
+1. Fork y crea una branch: `git checkout -b feature/mi-feature`
+2. Asegúrate de pasar tests: `pytest`
+3. Haz push y abre PR describiendo el cambio.
 
+Para contribuciones significativas, considera abrir un issue antes para discutir el diseño.
 
+---
 
-### <span style="color:green"> Contribución </span>
-**Las contribuciones son bienvenidas! Sigue estos pasos:**
+## Licencia
 
-- Forkea el repositorio.
-- Crea una branch para tu feature: git checkout -b feature/nueva-funcionalidad.
-- Commitea tus cambios: git commit -m 'Agrega nueva funcionalidad'.
-- Pushea a la branch: git push origin feature/nueva-funcionalidad.
-- Abre un Pull Request.
+(Indica aquí la licencia que desees; por ejemplo MIT). Añade un archivo LICENSE en la raíz con la licencia seleccionada.
 
-Asegúrate de correr pruebas antes de subir cambios: pytest.
-Licencia
+---
 
-**Contacto** \
-Desarrollado por Elvin Cooper
+## Contacto
 
-GitHub: @ElvinCooper
+Desarrollado por Elvin Cooper  
+GitHub: @ElvinCooper  
 Email: ing.elvin01cooper@gmail.com
 
-¡Gracias por el interés! Si encuentras issues o tienes sugerencias, abre un ticket en el repo.
-
+Gracias por tu interés. Si encuentras errores en la documentación o en el código, abre un issue en el repositorio.

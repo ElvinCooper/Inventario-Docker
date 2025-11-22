@@ -15,6 +15,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.exceptions import HTTPException
 import traceback
 from ..limiter import limiter
+from ..services.mailer import send_welcome_email
 
 
 usuario_bp = Blueprint('Usuarios', __name__, description='Operaciones con usuarios')
@@ -50,6 +51,14 @@ class UsuarioRegister(MethodView):
             # Guardar el nuevo usuario
             db.session.add(nuevo_usuario)
             db.session.commit()
+
+            # ENVIAR EMAIL DE BIENVENIDA
+            try:
+                send_welcome_email(nuevo_usuario.email, nuevo_usuario.nombre)
+                current_app.logger.info(f"Email de bienvenida enviado a {nuevo_usuario.email}")
+            except Exception as email_error:
+                # No fallar el registro si el email falla
+                current_app.logger.error(f"Error enviando email: {str(email_error)}")
 
             return nuevo_usuario, HTTPStatus.CREATED
 

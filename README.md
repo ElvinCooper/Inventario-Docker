@@ -169,13 +169,18 @@ La documentación interactiva (Swagger) es la fuente canónica. A modo de resume
 - etc.
 
 Ejemplo de payload (JSON) para crear producto:
+
 ```json
 {
-  "name": "Laptop Dell",
-  "description": "Laptop con 16GB RAM",
-  "price": 1200.00,
-  "stock": 10,
-  "category_id": 1
+  "nombre_producto": "Laptop Dell",
+  "descripcion": "Laptop con 16GB RAM",
+  "imagen_url": "https://imagentest.com",
+  "codigo_barras": "BLK87",
+  "precio": 1200.00,
+  "stock_minimo": 25,
+  "stock_actual": 75,
+  "id_categoria": "id54fd65f4gds6",
+  "status": true
 }
 ```
 

@@ -46,6 +46,7 @@ class BaseConfig:
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+    FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 
 class ProductionConfig(BaseConfig):
     DEBUG = False

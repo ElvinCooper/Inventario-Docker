@@ -19,7 +19,7 @@ def init_extensions(app):
     mail.init_app(app)
 
     # Log de configuracion de desarrollo
-    if app.config['development']:
+    if app.config['DEBUG']:
        app.logger.info(f"Mail Server: {app.config.get('MAIL_SERVER')}")
        app.logger.info(f"Mail Port: {app.config.get('MAIL_PORT')}")
        app.logger.info(f"Mail Username: {app.config.get('MAIL_USERNAME')}")

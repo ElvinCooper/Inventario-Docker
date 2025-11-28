@@ -1,6 +1,10 @@
 # Inventario-Dockerizado
 
-**Python 3.12+**
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ElvinCooper/Inventario-Docker/test-and-deploy.yaml)
+
+![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
+![Flask](https://img.shields.io/badge/Flask-2.x-green?logo=flask)
 
 ## Descripción
 

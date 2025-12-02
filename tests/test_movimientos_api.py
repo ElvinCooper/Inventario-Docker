@@ -1,6 +1,6 @@
 """Tests para endpoints de movimientos"""
 import pytest
-from app.app.models import Movimientos, Producto, Categoria
+from app.models import Movimientos, Producto, Categoria
 
 pytestmark = pytest.mark.integration
 

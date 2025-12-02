@@ -3,7 +3,7 @@ from flask.views import MethodView
 from flask import current_app
 from http import HTTPStatus
 from werkzeug.security import generate_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from datetime import timedelta
 from ..schemas.password_reset_schema import (RequestPasswordResetSchema, ResetPasswordSchema, PasswordResetResponseSchema)
 from ..models import Usuario
@@ -66,6 +66,11 @@ class PasswordResetResource(MethodView):
     def put(self, data):
         """Confirmar reset - Cambia la contraseña con el token"""
         try:
+            # Validar tipo de token
+            claims = get_jwt()
+            if claims.get('type') != 'password_reset':
+                smorest_abort(HTTPStatus.UNAUTHORIZED, message="Token inválido para esta operación")
+
             # Obtener usuario del token
             user_id = get_jwt_identity()
             usuario = Usuario.query.get(user_id)

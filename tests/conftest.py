@@ -12,9 +12,9 @@ from decimal import Decimal
 import pytest
 import subprocess
 import time
-from app.app.run import create_app
-from app.app.extensions import db as _db
-from app.app.models import Usuario, Producto, Categoria, Proveedor, Movimientos
+from app.run import create_app
+from app.extensions import db as _db
+from app.models import Usuario, Producto, Categoria, Proveedor, Movimientos
 from werkzeug.security import generate_password_hash
 
 

@@ -4,7 +4,7 @@ Tests unitarios para los modelos de la base de datos.
 from decimal import Decimal
 from werkzeug.security import generate_password_hash, check_password_hash
 import pytest
-from app.app.models import Producto, Categoria, Usuario, Proveedor, Movimientos
+from app.models import Producto, Categoria, Usuario, Proveedor, Movimientos
 
 # Marcar tests como unitarios
 pytestmark = pytest.mark.unit

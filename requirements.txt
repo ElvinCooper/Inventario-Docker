@@ -14,4 +14,4 @@ marshmallow==4.0.0
 gunicorn==23.0.0
 dotenv==0.9.9
 marshmallow-sqlalchemy
-Flask-Mail
+Flask-Mail==0.9.1

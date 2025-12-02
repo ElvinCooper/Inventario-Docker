@@ -23,6 +23,7 @@ services:
   test-api:
     build: .
     container_name: inventory_test_api
+    env_file: .env
     environment:
       FLASK_ENV: testing
       PYTHONPATH: /app

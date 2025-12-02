@@ -1,7 +1,7 @@
 """Tests para endpoints de proveedores"""
 import pytest
 from decimal import Decimal
-from app.models import Proveedor
+from app.app.models import Proveedor
 
 pytestmark = pytest.mark.integration
 

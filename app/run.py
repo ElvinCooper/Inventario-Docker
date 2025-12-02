@@ -38,6 +38,7 @@ def create_app(env=None):
     from .rutes.movimientos_rutes import blp_movimientos
     from .rutes.categorias_rutes import blp_categorias
     from .rutes.proveedores_rutes import blp_proveedores
+    from .rutes.password_reset_rutes import password_reset_bp
 
     api = Api(app)
 
@@ -60,7 +61,7 @@ def create_app(env=None):
     api.register_blueprint(blp_categorias, url_prefix="/api/v1")
     api.register_blueprint(blp_proveedores, url_prefix="/api/v1")
     api.register_blueprint(blp_movimientos, url_prefix="/api/v1")
-
+    api.register_blueprint(password_reset_bp, url_prefix="/api/v1")
 
     return app
 
@@ -68,5 +69,3 @@ app = create_app()
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8000, debug=True)
-    #app = create_app()
-    #app.run()

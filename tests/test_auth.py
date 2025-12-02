@@ -5,7 +5,6 @@ from http import HTTPStatus
 import pytest
 from werkzeug.security import check_password_hash
 import time
-from app.limiter import limiter
 
 pytestmark = pytest.mark.integration
 

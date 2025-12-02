@@ -45,6 +45,8 @@ jobs:
           SECRET_KEY: test-secret
           FLASK_ENV: testing
         run: |
+          pip install pytest==7.4.3 
+          pip install pytest-cov==4.1.0
           pytest --maxfail=1 -v --cov=app --cov-report=html --cov-report=term
 
       - name: Upload coverage

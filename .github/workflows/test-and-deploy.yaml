@@ -82,7 +82,12 @@ jobs:
             ${{ secrets.DOCKER_USERNAME_API }}/inventario-api:${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME_API }}/inventario-api:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME_API }}/inventario-api:buildcache,mode=max
+          
 
+      - name: Deploy a Render (si pasan los tests y la rama es main)  
+        if: success() && github.ref == 'refs/heads/main'   
+        run: |
+          curl -X POST ${{ secrets.RENDER_INVENTORY_DEPLOY_HOOK }}
 
       - name: Send Gmail Notification - Success
         if: success() && github.ref == 'refs/heads/main'

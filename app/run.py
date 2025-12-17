@@ -36,7 +36,7 @@ def create_app(env=None):
 
     # Inicializar extensiones
     init_extensions(app)
-    init_limiter(app)
+    #init_limiter(app)
 
     from .rutes.productos_rutes import productos_bp
     from .rutes.user_rutes import usuario_bp

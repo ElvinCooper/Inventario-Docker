@@ -29,6 +29,19 @@ def create_app(env=None):
     else :
         app.config.from_object(TestingConfig)
 
+
+    @app.errorhandler(429)
+    def ratelimit_handler(e):
+        return jsonify({
+            "error": "Límite de Solicitudes Excedido (429)",
+            "message": "Ha enviado demasiadas solicitudes en el tiempo permitido. Intente nuevamente más tarde."
+        }), 429
+
+
+    @app.get("/")
+    def index():
+        return "Inventory API running"
+
     # Inicializar extensiones
     init_extensions(app)
     init_limiter(app)

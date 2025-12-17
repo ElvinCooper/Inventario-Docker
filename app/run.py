@@ -27,15 +27,7 @@ def create_app(env=None):
     elif env == "production":
         app.config.from_object(ProductionConfig)
     else :
-        app.config.from_object(TestingConfig)
-
-
-    @app.errorhandler(429)
-    def ratelimit_handler(e):
-        return jsonify({
-            "error": "Límite de Solicitudes Excedido (429)",
-            "message": "Ha enviado demasiadas solicitudes en el tiempo permitido. Intente nuevamente más tarde."
-        }), 429
+        app.config.from_object(TestingConfig)    
 
 
     @app.get("/")

@@ -38,7 +38,7 @@ class ProductoResource(MethodView):
             "total": pagination.total,
             "pages": pagination.pages,
             "current_page": pagination.page,
-            "per_page": pagination.pages,
+            "per_page": pagination.per_page,
             "has_next": pagination.has_next,
             "has_prev": pagination.has_prev,
         }

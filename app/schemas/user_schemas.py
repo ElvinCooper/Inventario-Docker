@@ -114,3 +114,9 @@ class TokenRefreshResponseSchema(Schema):
 
     acces_token = fields.String(required=True)
     refresh_token = fields.String(required=True)
+
+
+# ---- schema para errores ----#
+class UserErrorSchema(Schema):
+    success = fields.Boolean(load_default=False)
+    message = fields.Str(required=True)

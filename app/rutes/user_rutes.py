@@ -8,8 +8,7 @@ from marshmallow.exceptions import ValidationError
 from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt, get_jwt_identity
 from flask.views import MethodView
 from ..models import Usuario, TokenBlocklist
-from ..schemas.error_schema import ErrorSchema
-from ..schemas.user_schemas import UserSimpleSchema, LoginSchema, LoginResponseSchema, LogoutResponseSchema, TokenRefreshResponseSchema, UserRegisterSchema, UserResponseSchema
+from ..schemas.user_schemas import UserSimpleSchema, LoginSchema, LoginResponseSchema, LogoutResponseSchema, TokenRefreshResponseSchema, UserRegisterSchema, UserResponseSchema, UserErrorSchema
 from flask import jsonify, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.exceptions import HTTPException
@@ -28,8 +27,8 @@ class UsuarioRegister(MethodView):
     @limiter.limit("5 per minute")  # intentos por minuto
     @usuario_bp.arguments(UserRegisterSchema)
     @usuario_bp.response(HTTPStatus.CREATED, UserResponseSchema)
-    @usuario_bp.alt_response(HTTPStatus.CONFLICT, schema=ErrorSchema, description="Ya existe un usuario con ese email", example={"success": False, "message": "Ya existe un usuario con ese email"})
-    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"success": False, "message": "Error interno del servidor"})
+    @usuario_bp.alt_response(HTTPStatus.CONFLICT, schema=UserErrorSchema, description="Ya existe un usuario con ese email", example={"success": False, "message": "Ya existe un usuario con ese email"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=UserErrorSchema, description="Error interno del servidor", example={"success": False, "message": "Error interno del servidor"})
     def post(self, data_usuario):
         """ Registrar un nuevo usuario """
         try:
@@ -74,8 +73,8 @@ class UsuarioRegister(MethodView):
 @usuario_bp.route('/usuarios')
 class UserResource(MethodView):
     @usuario_bp.response(HTTPStatus.OK, UserSimpleSchema(many=True))
-    @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=UserErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=UserErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self):
         """ Consultar todos los usuarios del sistema """
@@ -87,8 +86,8 @@ class UserResource(MethodView):
 @usuario_bp.route('/usuario/<string:id_usuario>')
 class UserIdResource(MethodView):
     @usuario_bp.response(HTTPStatus.OK, UserSimpleSchema)
-    @usuario_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Usuario no encontrado", example={"succes": False, "message": "Usuario no encontrado"})
-    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @usuario_bp.alt_response(HTTPStatus.NOT_FOUND, schema=UserErrorSchema, description="Usuario no encontrado", example={"succes": False, "message": "Usuario no encontrado"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=UserErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, id_usuario):
         """ Consultar un usuario por su Id"""
@@ -104,8 +103,8 @@ class UserIdResource(MethodView):
 @limiter.limit("5 per minute")
 @usuario_bp.arguments(LoginSchema)
 @usuario_bp.response(HTTPStatus.OK, LoginResponseSchema)
-@usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})
-@usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error al generar token", example={"success": False, "message": "Error interno del servidor"})
+@usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=UserErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})
+@usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=UserErrorSchema, description="Error al generar token", example={"success": False, "message": "Error interno del servidor"})
 def login_user(data_login):
     """ Login de usuarios """
     try:
@@ -154,8 +153,8 @@ def login_user(data_login):
 class LogoutResource(MethodView):
     @jwt_required()
     @usuario_bp.response(HTTPStatus.OK, LogoutResponseSchema)
-    @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})
-    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error al generar token", example={"success": False, "message": "Error interno del servidor"})
+    @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=UserErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=UserErrorSchema, description="Error al generar token", example={"success": False, "message": "Error interno del servidor"})
     def post(self):
         """ Logout usuarios  """
         jti =get_jwt()['jti']
@@ -170,8 +169,8 @@ class LogoutResource(MethodView):
 class RefreshToken(MethodView):
     @jwt_required()
     @usuario_bp.response(HTTPStatus.OK, TokenRefreshResponseSchema)
-    @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})
-    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error al generar token", example={"success": False, "message": "Error interno del servidor"})
+    @usuario_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=UserErrorSchema, description="No esta autorizado", example={"success": False, "message": "No esta autorizado"})
+    @usuario_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=UserErrorSchema, description="Error al generar token", example={"success": False, "message": "Error interno del servidor"})
     @jwt_required()
     def post(self):
         """ Renovar los tokens """

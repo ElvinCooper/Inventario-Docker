@@ -9,8 +9,7 @@ from marshmallow.exceptions import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask.views import MethodView
 from ..models import Producto, Movimientos, Usuario
-from ..schemas.error_schema import ErrorSchema
-from ..schemas.movimientos_schema import PaginateMovimientoSchema, MovimientoSchema
+from ..schemas.movimientos_schema import PaginateMovimientoSchema, MovimientoSchema, MovimientoErrorSchema
 from ..limiter import limiter
 
 
@@ -23,9 +22,9 @@ class CreateMovimientoResource(MethodView):
     @limiter.limit("20 per minute")
     @blp_movimientos.arguments(MovimientoSchema)
     @blp_movimientos.response(HTTPStatus.CREATED, MovimientoSchema)
-    @blp_movimientos.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrado", example={"success": False, "message": "Producto no encontrado"})
-    @blp_movimientos.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @blp_movimientos.alt_response(HTTPStatus.NOT_FOUND, schema=MovimientoErrorSchema, description="Producto no encontrado", example={"success": False, "message": "Producto no encontrado"})
+    @blp_movimientos.alt_response(HTTPStatus.UNAUTHORIZED, schema=MovimientoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=MovimientoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
 
     @jwt_required()
     def post(self, data_movimiento):
@@ -72,8 +71,8 @@ class CreateMovimientoResource(MethodView):
 @blp_movimientos.route("/movimientos")
 class MovimientoResource(MethodView):
     @blp_movimientos.response(HTTPStatus.OK, PaginateMovimientoSchema)
-    @blp_movimientos.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @blp_movimientos.alt_response(HTTPStatus.UNAUTHORIZED, schema=MovimientoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=MovimientoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, page =1, per_page=10):
         """ Consultar todos los movimientos en el sistema"""
@@ -100,9 +99,9 @@ class MovimientoResource(MethodView):
 @blp_movimientos.route("/movimiento/<string:id_movimiento>")
 class MovimientoIdResource(MethodView):
     @blp_movimientos.response(HTTPStatus.OK, MovimientoSchema)
-    @blp_movimientos.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Movimiento no existe", example={"success": False, "message": "Movimiento no existe"})
-    @blp_movimientos.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @blp_movimientos.alt_response(HTTPStatus.NOT_FOUND, schema=MovimientoErrorSchema, description="Movimiento no existe", example={"success": False, "message": "Movimiento no existe"})
+    @blp_movimientos.alt_response(HTTPStatus.UNAUTHORIZED, schema=MovimientoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=MovimientoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, id_movimiento):
         """ Consultar los movimientos por su ID"""
@@ -117,9 +116,9 @@ class MovimientoIdResource(MethodView):
 @blp_movimientos.route("/movimientos/<string:id_usuario>")
 class MovimientoUserResource(MethodView):
     @blp_movimientos.response(HTTPStatus.OK, PaginateMovimientoSchema)
-    @blp_movimientos.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Usuario no encontrado", example={"success": False, "message": "Usuario no encontrado"})
-    @blp_movimientos.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @blp_movimientos.alt_response(HTTPStatus.NOT_FOUND, schema=MovimientoErrorSchema, description="Usuario no encontrado", example={"success": False, "message": "Usuario no encontrado"})
+    @blp_movimientos.alt_response(HTTPStatus.UNAUTHORIZED, schema=MovimientoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @blp_movimientos.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=MovimientoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, id_usuario):
         """ Consultar todos los movimientos de un usuario"""

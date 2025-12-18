@@ -59,3 +59,7 @@ class ProductoUpdateSchema(Schema):
 
 
 
+# ---- schema para errores ----#
+class ProductoErrorSchema(Schema):
+    success = fields.Boolean(load_default=False)
+    message = fields.Str(required=True)

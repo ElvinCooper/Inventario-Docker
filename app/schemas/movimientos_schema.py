@@ -1,7 +1,5 @@
 from marshmallow import fields, validate, post_load, Schema
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from ..models import Producto, Movimientos, Usuario
-from ..extensions import db
 
 
 
@@ -27,3 +25,10 @@ class PaginateMovimientoSchema(SQLAlchemyAutoSchema):
     per_page = fields.Int()
     has_next = fields.Bool()
     has_prev = fields.Bool()
+
+
+
+# ---- schema para errores ----#
+class MovimientoErrorSchema(Schema):
+    success = fields.Boolean(load_default=False)
+    message = fields.Str(required=True)

@@ -44,3 +44,9 @@ class ProveedorUpdateSchema(Schema):
     email = fields.Str(required=False)
     direccion = fields.Str(required=False)
     status = fields.Bool(required=False)
+
+
+# ---- schema para errores ----#
+class ProveedorErrorSchema(Schema):
+    success = fields.Boolean(load_default=False)
+    message = fields.Str(required=True)

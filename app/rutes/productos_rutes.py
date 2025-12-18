@@ -2,17 +2,13 @@ import datetime
 import uuid
 from datetime import timezone, datetime
 from flask_smorest import Blueprint, abort
-
-from .movimientos_rutes import blp_movimientos
 from ..extensions import db
 from http import HTTPStatus
-#####from schemas.Error_schemas import ErrorSchema
 from marshmallow.exceptions import ValidationError
 from flask_jwt_extended import jwt_required
 from flask.views import MethodView
-from ..models import Producto, Categoria, Movimientos, ProductoProveedor
-from ..schemas.error_schema import ErrorSchema
-from ..schemas.producto_schema import ProductoSchema, PaginationSchema, PaginateProductoSchema, ProductoUpdateSchema
+from ..models import Producto, Categoria
+from ..schemas.producto_schema import ProductoSchema, PaginationSchema, PaginateProductoSchema, ProductoUpdateSchema, ProductoErrorSchema
 from flask import request
 
 
@@ -26,8 +22,8 @@ productos_bp = Blueprint('Productos', __name__, description='Operaciones con pro
 @productos_bp.route("/productos")
 class ProductoResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, PaginateProductoSchema)
-    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ProductoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ProductoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, page =1, per_page=10):
         """ Consultar todos los productos en el sistema"""
@@ -54,9 +50,9 @@ class ProductoResource(MethodView):
 @productos_bp.route("/productos/<string:id_producto>")
 class ProductoResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
-    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrada", example={"success": False, "message": "No existe un producto con el Id proveeido"})
-    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ProductoErrorSchema, description="Producto no encontrada", example={"success": False, "message": "No existe un producto con el Id proveeido"})
+    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ProductoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ProductoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, id_producto):
         """ Consultar los productos por su ID"""
@@ -73,9 +69,9 @@ class ProductoResource(MethodView):
 @productos_bp.route("/productos/categoria/<string:id_categoria>")
 class ProductosCategoriaResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, PaginateProductoSchema)
-    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="No existen productos para esta categoría", example={"success": False, "message": "Categoría no encontrada"})
-    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ProductoErrorSchema, description="No existen productos para esta categoría", example={"success": False, "message": "Categoría no encontrada"})
+    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ProductoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ProductoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def get(self, id_categoria, page =1, per_page=10):
         """ Consultar los productos por su categoria """
@@ -116,10 +112,10 @@ class ProductosCategoriaResource(MethodView):
 class CreateProductoResource(MethodView):
     @productos_bp.arguments(ProductoSchema)
     @productos_bp.response(HTTPStatus.CREATED, ProductoSchema)
-    @productos_bp.alt_response(HTTPStatus.CONFLICT, schema=ErrorSchema, description="Solicitud inválida", example={"success": False, "message": "Ya existe un producto con ese código de barras"})
-    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Categoría no encontrada", example={"success": False, "message": "No existe esta categoria"})
-    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @productos_bp.alt_response(HTTPStatus.CONFLICT, schema=ProductoErrorSchema, description="Solicitud inválida", example={"success": False, "message": "Ya existe un producto con ese código de barras"})
+    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ProductoErrorSchema, description="Categoría no encontrada", example={"success": False, "message": "No existe esta categoria"})
+    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ProductoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ProductoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def post(self, data_producto):
         """ Ingresar un nuevo producto en el sistema"""
@@ -169,9 +165,9 @@ class CreateProductoResource(MethodView):
 @productos_bp.route("/productos/delete/<string:id_producto>")
 class ProductoResource(MethodView):
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
-    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrado", example={"success": False, "message": "No existe un producto con el Id proveeido"})
-    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ProductoErrorSchema, description="Producto no encontrado", example={"success": False, "message": "No existe un producto con el Id proveeido"})
+    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ProductoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ProductoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def delete(self, id_producto):
         """ Eliminar un producto por su ID """
@@ -196,9 +192,9 @@ class ProductoResource(MethodView):
 class ProductoResource(MethodView):
     @productos_bp.arguments(ProductoUpdateSchema)
     @productos_bp.response(HTTPStatus.OK, ProductoSchema)
-    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ErrorSchema, description="Producto no encontrado", example={"success": False, "message": "No existe un producto con el Id proveeido"})
-    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
-    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
+    @productos_bp.alt_response(HTTPStatus.NOT_FOUND, schema=ProductoErrorSchema, description="Producto no encontrado", example={"success": False, "message": "No existe un producto con el Id proveeido"})
+    @productos_bp.alt_response(HTTPStatus.UNAUTHORIZED, schema=ProductoErrorSchema, description="No autorizado", example={"succes": False, "message": "No autorizado"})
+    @productos_bp.alt_response(HTTPStatus.INTERNAL_SERVER_ERROR, schema=ProductoErrorSchema, description="Error interno del servidor", example={"succes": False, "message": "Error interno del servidor"})
     @jwt_required()
     def put(self, update_data, id_producto ):
         """ Actualizar un producto por su ID """

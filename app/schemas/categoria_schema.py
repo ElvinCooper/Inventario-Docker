@@ -40,3 +40,9 @@ class CategoriaUpdateSchema(Schema):
 class SuccessResponseSchema(Schema):
     success = fields.Bool()
     message = fields.Str()
+
+
+# ---- schema para errores ----#
+class CategoriaErrorSchema(Schema):
+    success = fields.Boolean(load_default=False)
+    message = fields.Str(required=True)

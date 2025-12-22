@@ -2,9 +2,14 @@
 
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ElvinCooper/Inventario-Docker/test-and-deploy.yaml)
+[![Postgres](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)](#)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
+[![Pytest](https://img.shields.io/badge/Pytest-fff?logo=pytest&logoColor=000)](#)
+
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
 ![Flask](https://img.shields.io/badge/Flask-2.x-green?logo=flask)
+[![OpenAPI](https://img.shields.io/badge/OpenAPI-6BA539?logo=openapiinitiative&logoColor=white)](#)
 
 ## Descripción
 

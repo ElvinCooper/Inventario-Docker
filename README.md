@@ -13,7 +13,7 @@
 
 ## Descripción
 
-Inventario-Docker es una API RESTful para la gestión de inventarios, construida con Python y Flask. Permite gestionar productos y categorías, cuenta con autenticación básica (JWT), documentación OpenAPI (Swagger) y está preparada para desplegarse con Docker y Docker Compose.
+Inventario-Docker es una API RESTful para la gestión de inventarios, construida con Python y Flask. Permite gestionar productos y categorías, cuenta con autenticación Jason Web Token (JWT), documentación OpenAPI (Swagger) y está preparada para desplegarse con Docker y Docker Compose.
 
 ## Características principales
 

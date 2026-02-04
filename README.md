@@ -25,17 +25,22 @@ Inventario-Docker es una API RESTful para la gestión de inventarios, construida
 - Despliegue con Docker y Docker Compose.
 - Base de datos PostgreSQL con migraciones (Alembic/Flask-Migrate).
 
-## Tecnologías
-
-- Python 3.12+
-- Flask
-- SQLAlchemy
-- PostgreSQL
-- OpenAPI / Swagger
-- Alembic (migraciones)
-- Gunicorn (servidor en producción)
-- Docker, Docker Compose
-- Pytest
+## Tecnologías  
+  
+- Python 3.12+  
+- Flask 2.x  
+- Flask-Smorest (OpenAPI/Swagger)  
+- Flask-JWT-Extended (autenticación)  
+- Flask-Limiter (rate limiting con Redis)  
+- Flask-Mail (SMTP)  
+- SQLAlchemy ORM  
+- Flask-Migrate (Alembic)  
+- PostgreSQL  
+- Gunicorn (producción)  
+- Docker, Docker Compose  
+- Redis (rate limiting en producción)  
+- Render (despliegue)  
+- Pytest (tests)
 
 ---
 
@@ -46,7 +51,9 @@ Inventario-Docker es una API RESTful para la gestión de inventarios, construida
 
 ---
 
-## Quickstart — Despliegue con Docker (recomendado)
+## Quickstart — Despliegue con Docker (recomendado)  
+...  
+- Swagger / documentación interactiva: http://localhost:8000/swagger-ui
 
 1. Clona el repositorio:
 ```bash
@@ -77,8 +84,9 @@ docker-compose logs -f
 
 1. Clona el repositorio:
 ```bash
-git clone https://github.com/ElvinCooper/Inventario-Docker.git
-cd Inventario-Docker
+export FLASK_APP=app.run  
+export FLASK_DEBUG=1  
+flask run --port 8000
 ```
 
 2. Crea y activa un entorno virtual:
@@ -123,6 +131,8 @@ Crea un archivo `.env` en la raíz (no subir a repositorios públicos con creden
 - DATABASE_URL (ejemplos abajo)
 - SECRET_KEY
 - FLASK_ENV
+- JWT_SECRET_KEY  
+- REDIS_URL
 
 Ejemplos de DATABASE_URL:
 - Para ejecución en Docker Compose (desde el contenedor `web`):  
@@ -177,19 +187,16 @@ La documentación interactiva (Swagger) es la fuente canónica. A modo de resume
 - GET /api/v1/categorias — Listar categorías
 - etc.
 
-Ejemplo de payload (JSON) para crear producto:
-
+## Ejemplo de payload para crear producto  
 ```json
-{
-  "nombre_producto": "Laptop Dell",
-  "descripcion": "Laptop con 16GB RAM",
-  "imagen_url": "https://imagentest.com",
-  "codigo_barras": "BLK87",
-  "precio": 1200.00,
-  "stock_minimo": 25,
-  "stock_actual": 75,
-  "id_categoria": "id54fd65f4gds6",
-  "status": true
+{  
+  "nombre_producto": "Laptop Dell",  
+  "descripcion": "Laptop con 16GB RAM",  
+  "codigo_barras": "BLK87",  
+  "precio": 1200.00,  
+  "stock_actual": 75,  
+  "id_categoria": "id54fd65f4gds6",  
+  "status": true  
 }
 ```
 
@@ -200,15 +207,12 @@ Sugerencia: para ejemplos de uso, usa curl o Postman con el endpoint `/api/v1/pr
 ## Estructura del proyecto (resumen)
 ```
 Inventario-Docker/
-├── app/                # Código fuente: routes, models, config, extensions
-├── migrations/         # Migraciones Alembic / Flask-Migrate
-├── tests/              # Pruebas con pytest
+├── app/
+├── migrations/
+├── tests/
 ├── Dockerfile
 ├── docker-compose.yaml
-├── docker-compose.test.yaml
 ├── requirements.txt
-├── requirements-dev.txt
-├── setup.py
 ├── openapi.json
 └── README.md
 ```
